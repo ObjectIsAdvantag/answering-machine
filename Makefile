@@ -7,13 +7,17 @@ default: all
 .PHONY: all
 all : clean build dev
 
+.PHONY: prod
+prod:
+	./answering-machine.exe -stderrthreshold=FATAL -log_dir=./log -v=0
+
 .PHONY: run
 run:
 	./answering-machine.exe -stderrthreshold=FATAL -log_dir=./log -v=2
 
 .PHONY: dev
 dev:
-	./answering-machine.exe -logtostderr=true -v=2
+	./answering-machine.exe -logtostderr=true -v=5
 
 .PHONY: build
 build:
@@ -22,7 +26,7 @@ build:
 .PHONY: debug
 debug:
 	godebug build $(GOFLAGS) -instrument github.com/$(USERNAME)/service/service.go
-	./answering-machine.debug -logtostderr=true -v=2
+	./answering-machine.debug -logtostderr=true -v=5
 
 .PHONY: linux
 linux:
