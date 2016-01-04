@@ -21,26 +21,26 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		glog.Info("SmartProxy version %s", version)
+		glog.Infof("SmartProxy version %s\n", version)
 		return
 	}
 
 	if _, err := strconv.Atoi(port); err != nil {
-		glog.Error("Invalid port: %s (%s)\n", port, err)
+		glog.Errorf("Invalid port: %s (%s)\n", port, err)
 	}
 
 	// [TODO] Initialize from an env variable
 	var apiKey="REPLACE ME"
 
-	glog.Info("Starting Answering Machine, version: %s", version)
+	glog.Infof("Starting Answering Machine, version: %s\n", version)
 
 	if err := service.Run(apiKey, port, version); err != nil {
-		glog.Error("Service exited with error: %s\n", err)
+		glog.Errorf("Service exited with error: %s\n", err)
 		glog.Flush()
 		os.Exit(255)
 		return
 	}
 
-	glog.Info("Service exited gracefully")
+	glog.Info("Service exited gracefully\n")
 	glog.Flush()
 }

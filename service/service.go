@@ -16,7 +16,7 @@ func Run(apiKey string, port string, version string) error {
 
 	service := &Service{ apiKey, port, version}
 	if err := service.Start(); err != nil {
-		glog.Error("Failed to start service: %v", err)
+		glog.Errorf("Failed to start service: %v\n", err)
 		return err
 	}
 
@@ -37,7 +37,7 @@ func (svc *Service) Start() error {
 		// register health check
 		start := time.Now()
 		http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-			glog.Info("hitted health check")
+			glog.Infof("hitted health check\n")
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			fmt.Fprintf(w, `{ "name":"%s", "version":"%s", "port":"%s", "started":"%s"}`, "Answering Machine", svc.version, svc.port, start.Format(time.RFC3339))
 		})
@@ -49,9 +49,9 @@ func (svc *Service) Start() error {
 			fmt.Fprintf(w, `{ "error": { "status":"%d", "reason":"NOT_IMPLEMENTED", "message":"You hitted an endpoint that is not implemented yet, contact the author to speed up devs" } }`, http.StatusInternalServerError)
 		})
 
-		glog.Info("Listening on http://:%s\n", svc.port)
+		glog.Infof("Listening on http://:%s\n", svc.port)
 		if err := http.ListenAndServe(":" + svc.port, nil); err != nil {
-			glog.Fatal("Service died unexpectedly",err)
+			glog.Fatalf("Service died unexpectedly\n",err)
 		}
 	}()
 
