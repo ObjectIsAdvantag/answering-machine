@@ -1,9 +1,6 @@
 # Goal
 
-Answering machine prototype in golang
-
-The cross device answering machine can be used to unify voice messages among all your deviceso
-
+The cross device answering machine can be used to unify voice messages among all your devices
 
 
 # Scenarios
@@ -17,13 +14,23 @@ Define notification channels : SMS, mail, instant messengers to be informed when
 
 # Implementation
 
-[ ] MVP with the Cisco stack (Tropo, Spark)
+[ ] MVP with a Cisco backend (Tropo, Spark)
    - golang server
-   - hosting on google app engine
    - Tropo voice services
-   - Notification to a Spark room
+   - local hosting tunneled 
+   
+[ ] Notification to a Spark room
 
+[ ] Hosting on google app engine
+   
 [ ] Switch hosting to Cisco shipped
+
+
+# License
+
+MIT, see license file.
+
+Feel free to use, reuse, extend, and contribute
 
 
 
