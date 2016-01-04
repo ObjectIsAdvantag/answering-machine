@@ -10,7 +10,7 @@ import (
 	"github.com/ObjectIsAdvantag/answering-machine/service"
 )
 
-const version = "0.1.draft"
+const version = "v0.1"
 
 func main() {
 	var showVersion bool
