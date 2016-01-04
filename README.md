@@ -14,8 +14,13 @@ Define notification channels : SMS, mail, instant messengers to be informed when
 
 # Implementation
 
+[X] back-end API structure
+   - args, version, glog
+   - healthcheck
+   - error structure
+   - v0.1
+
 [ ] MVP with a Cisco backend (Tropo, Spark)
-   - golang server
    - Tropo voice services
    - local hosting tunneled 
    
