@@ -43,7 +43,7 @@ func (svc *Service) Start() error {
 		})
 
 		// register the TropoApplication
-		app := tropo.Application{}
+		app := tropo.NewAnsweringMachine()
 		http.HandleFunc("/", app.ServeHTTP)
 
 		glog.Infof("Listening on http://:%s\n", svc.port)
