@@ -1,4 +1,4 @@
-package service
+package server
 
 import (
 	"fmt"
@@ -9,27 +9,27 @@ import (
 	"net/http"
 
 	"github.com/golang/glog"
-	"github.com/ObjectIsAdvantag/answering-machine/tropo"
+	"github.com/ObjectIsAdvantag/answering-machine/machine"
 )
 
 
 func Run(port string, version string) error {
 
-	service := &Service{ port, version}
+	service := &Server{ port, version}
 	if err := service.Start(); err != nil {
-		glog.Errorf("Failed to start service: %v\n", err)
+		glog.Errorf("Failed to start server: %v\n", err)
 		return err
 	}
 
 	return nil
 }
 
-type Service struct {
+type Server struct {
 	port 		string
 	version 	string
 }
 
-func (svc *Service) Start() error {
+func (svc *Server) Start() error {
 
 	// start http server
 	go func() {
@@ -43,8 +43,8 @@ func (svc *Service) Start() error {
 		})
 
 		// register the TropoApplication
-		app := tropo.NewAnsweringMachine()
-		http.HandleFunc("/", app.ServeHTTP)
+		app := machine.NewAnsweringMachine()
+		app.RegisterHandlers()
 
 		glog.Infof("Listening on http://:%s\n", svc.port)
 		if err := http.ListenAndServe(":" + svc.port, nil); err != nil {

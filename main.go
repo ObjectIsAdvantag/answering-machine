@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang/glog"
 
-	"github.com/ObjectIsAdvantag/answering-machine/service"
+	"github.com/ObjectIsAdvantag/answering-machine/server"
 )
 
 const version = "v0.1"
@@ -15,7 +15,7 @@ const version = "v0.1"
 func main() {
 	var showVersion bool
 	var port string
-	flag.StringVar(&port, "port", "8080", "ip port of the service, defaults to 8080")
+	flag.StringVar(&port, "port", "8080", "ip port of the server, defaults to 8080")
 	flag.BoolVar(&showVersion, "version", false, "display version")
 
 	flag.Parse()
@@ -31,7 +31,7 @@ func main() {
 
 	glog.Infof("Starting Answering Machine, version: %s\n", version)
 
-	if err := service.Run(port, version); err != nil {
+	if err := server.Run(port, version); err != nil {
 		glog.Errorf("Service exited with error: %s\n", err)
 		glog.Flush()
 		os.Exit(255)
