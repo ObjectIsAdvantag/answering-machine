@@ -27,4 +27,7 @@ _testmain.go
 # devenv
 .idea/
 
+# runtime
 log/
+answering-machine.exe
+answering-machine
