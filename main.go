@@ -29,12 +29,9 @@ func main() {
 		glog.Errorf("Invalid port: %s (%s)\n", port, err)
 	}
 
-	// [TODO] Initialize from an env variable
-	var apiKey="REPLACE ME"
-
 	glog.Infof("Starting Answering Machine, version: %s\n", version)
 
-	if err := service.Run(apiKey, port, version); err != nil {
+	if err := service.Run(port, version); err != nil {
 		glog.Errorf("Service exited with error: %s\n", err)
 		glog.Flush()
 		os.Exit(255)
