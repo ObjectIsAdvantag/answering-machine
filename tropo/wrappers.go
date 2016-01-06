@@ -15,7 +15,7 @@ type Session struct {
 	AccountID string `json:"accountId"`
 	Timestamp time.Time `json:"timestamp"`
 	UserType string `json:"userType"`
-	Initialtext interface{} `json:"initialText"`
+	InitialText interface{} `json:"initialText"`
 	CallID string `json:"callId"`
 	To struct {
 		ID string `json:"id"`

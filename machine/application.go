@@ -20,7 +20,7 @@ type AnsweringMachine struct {
 
 
 func NewAnsweringMachine() *AnsweringMachine {
-	app := AnsweringMachine{"Audrey", "/", "/success", "/incomplete", "/error", "http://recorder.localtunnel.me/recordings", "steve.sfartz@gmail.com"}
+	app := AnsweringMachine{"Audrey", "/", "/answer", "/timeout", "/error", "http://recorder.localtunnel.me/recordings", "steve.sfartz@gmail.com"}
 	return &app
 }
 
@@ -43,6 +43,7 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 	}
 
 	// check a human is calling
+	_ = "breakpoint"
 	if session.UserType != "HUMAN" || session.From.Channel != "VOICE" {
 		glog.V(1).Infof("Unsupported incoming request: %s\n", req.Method)
 		tropo.ReplyBadInput()
@@ -52,9 +53,9 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 	// echo leave a message
 	number := session.From.ID
 	glog.V(0).Infof(`SessionID "%s", CallID "%s", From "+%s"`, session.ID, session.CallID, number)
-	tropo.Say("Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.", app.Voice)
+	// tropo.Say("Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.", app.Voice)
 //	fmt.Fprintf(w, `{"tropo":[{"record":{"say":[{"value":"Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.","voice":"Audrey"},{"event":"timeout","value":"Désolé, nous n'avons pas entendu votre message. Merci de ré-essayer.","voice":"Audrey"}],"name":"foo","url":"https://recording.localtunnel.me/","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"},"choices":{"terminator":"#"}}}]}`)
-
+	tropo.SendRaw(`{"tropo":[{"say":{"value":"Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 !","voice":"Audrey"}},{"record":{"attempts":3,"bargein":false,"choices":{"terminator":"#"},"maxSilence":5,"maxTime":60,"name":"recording","say":{"value":"Laissez votre message après le bip","voice":"Audrey"},"timeout":10,"url":"https://recordings.localtunnel.me/recordings","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"}}},{"on":{"event":"continue","next":"/answer","required":true}},{"on":{"event":"incomplete","next":"/timeout","required":true}},{"on":{"event":"error","next":"/error","required":true}}]}`)
 }
 
 func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req *http.Request) {

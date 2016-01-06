@@ -25,7 +25,7 @@ build:
 
 .PHONY: debug
 debug:
-	godebug build $(GOFLAGS) -instrument github.com/$(USERNAME)/service/service.go
+	godebug build $(GOFLAGS) -instrument github.com/$(USERNAME)/answering-machine/machine,github.com/$(USERNAME)/answering-machine/tropo
 	./answering-machine.debug -logtostderr=true -v=5
 
 .PHONY: linux

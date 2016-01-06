@@ -29,16 +29,9 @@ func NewDriver(w http.ResponseWriter, req *http.Request) *TropoDriver {
 	return &TropoDriver{req, w}
 }
 
-func (d *TropoDriver) Say(message string, voice string) {
-
-	d.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
-	fmt.Fprintf(d.writer, `{"tropo":[{"say":[{"value":"%s","voice":"%s"}]}]}`, message, voice)
-
-}
-
 
 func (d *TropoDriver) ReadSession() (*Session, error) {
-
+	_ = "breakpoint"
 	if (d.request.Method != "POST") {
 		glog.V(1).Infof("Unsupported incoming request: %s\n", d.request.Method)
 		return nil, errors.New("Only POST is implemented")
@@ -52,6 +45,18 @@ func (d *TropoDriver) ReadSession() (*Session, error) {
 	}
 
 	return &(sw.session), nil
+}
+
+
+func (d *TropoDriver) Say(message string, voice string) {
+	d.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+	fmt.Fprintf(d.writer, `{"tropo":[{"say":[{"value":"%s","voice":"%s"}]}]}`, message, voice)
+}
+
+
+func (d *TropoDriver) SendRaw(jsonString string) {
+	d.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+	fmt.Fprintf(d.writer, jsonString)
 }
 
 

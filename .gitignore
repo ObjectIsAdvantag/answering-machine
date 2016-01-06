@@ -30,4 +30,5 @@ _testmain.go
 # runtime
 log/
 answering-machine.exe
+answering-machine.debug
 answering-machine
