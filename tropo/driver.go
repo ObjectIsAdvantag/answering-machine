@@ -44,7 +44,7 @@ func (d *TropoDriver) ReadSession() (*Session, error) {
 		return nil, errors.New("Could not parse body")
 	}
 
-	return &(sw.session), nil
+	return &(sw.Session), nil
 }
 
 
