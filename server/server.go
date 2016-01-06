@@ -9,14 +9,16 @@ import (
 	"net/http"
 
 	"github.com/golang/glog"
-	"github.com/ObjectIsAdvantag/answering-machine/machine"
 )
 
+type Service interface {
+	RegisterHandlers()
+}
 
-func Run(port string, version string) error {
+func Run(port string, svc Service, version string, name string) error {
 
-	service := &Server{ port, version}
-	if err := service.Start(); err != nil {
+	server := &server{ port, svc, version, name}
+	if err := server.start(); err != nil {
 		glog.Errorf("Failed to start server: %v\n", err)
 		return err
 	}
@@ -24,30 +26,31 @@ func Run(port string, version string) error {
 	return nil
 }
 
-type Server struct {
-	port 		string
-	version 	string
+type server struct {
+	port 				string
+	service				Service
+	serviceVersion 		string
+	serviceName 		string
 }
 
-func (svc *Server) Start() error {
+func (srv *server) start() error {
 
 	// start http server
 	go func() {
 
 		// register health check
-		start := time.Now()
+		launch := time.Now()
 		http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
 			glog.V(1).Infof("hit healthcheck endpoint\n")
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
-			fmt.Fprintf(w, `{ "name":"%s", "version":"%s", "port":"%s", "started":"%s"}`, "Answering Machine", svc.version, svc.port, start.Format(time.RFC3339))
+			fmt.Fprintf(w, `{ "name":"%s", "version":"%s", "port":"%s", "started":"%s"}`, srv.serviceName, srv.serviceVersion, srv.port, launch.Format(time.RFC3339))
 		})
 
-		// register the TropoApplication
-		app := machine.NewAnsweringMachine()
-		app.RegisterHandlers()
+		// register service endpoints
+		srv.service.RegisterHandlers()
 
-		glog.Infof("Listening on http://:%s\n", svc.port)
-		if err := http.ListenAndServe(":" + svc.port, nil); err != nil {
+		glog.Infof("Listening on http://:%s\n", srv.port)
+		if err := http.ListenAndServe(":" + srv.port, nil); err != nil {
 			glog.Fatalf("Service died unexpectedly\n",err)
 		}
 	}()

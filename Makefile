@@ -2,30 +2,38 @@
 GOFLAGS = -tags netgo
 USERNAME = ObjectIsAdvantag
 
-default: all
+default: dev
 
 .PHONY: all
-all : clean build dev
+all : build build-recorder run
 
-.PHONY: prod
-prod:
-	./answering-machine.exe -stderrthreshold=FATAL -log_dir=./log -v=0
+.PHONY: build-recorder
+build-recorder:
+	rm -f recorder-server.exe recorder-server
+	go build recorder-server.go
+
+.PHONY: recorder
+recorder: build-recorder
+	./recorder-server.exe -logtostderr=true -v=5
 
 .PHONY: run
 run:
-	./answering-machine.exe -stderrthreshold=FATAL -log_dir=./log -v=2
+	(./answering-machine.exe -logtostderr=true -v=5 &)
+	(./recorder-server.exe -logtostderr=true -v=5 &)
+	(lt -p 8080 -s answeringmachine &)
+	(lt -p 8081 -s recorder &)
 
 .PHONY: dev
-dev:
+dev: clean build
 	./answering-machine.exe -logtostderr=true -v=5
 
 .PHONY: build
-build:
-	go build $(GOFLAGS)
+build: clean
+	go build $(GOFLAGS) answering-machine.go
 
 .PHONY: debug
 debug:
-	godebug build $(GOFLAGS) -instrument github.com/$(USERNAME)/answering-machine/machine,github.com/$(USERNAME)/answering-machine/tropo
+	godebug build $(GOFLAGS) -instrument github.com/$(USERNAME)/answering-machine/machine,github.com/$(USERNAME)/answering-machine/tropo answering-machine.go
 	./answering-machine.debug -logtostderr=true -v=5
 
 .PHONY: linux

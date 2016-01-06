@@ -28,7 +28,10 @@ _testmain.go
 .idea/
 
 # runtime
-log/
 answering-machine.exe
 answering-machine.debug
 answering-machine
+
+# artefacts
+log/
+uploads/

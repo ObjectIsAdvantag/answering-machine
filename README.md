@@ -20,10 +20,11 @@ Define notification channels : SMS, mail, instant messengers to be informed when
    - error structure
    - v0.1
 
-[ ] MVP with a Cisco backend (Tropo, Spark)
+[x] MVP with a Cisco backend (Tropo, Spark)
    - Provisioning scripts (postman collection)
    - local hosting tunnelled 
    - Tropo voice services
+   - v0.2
 
 [ ] Notification to a Spark room
 

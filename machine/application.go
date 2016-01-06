@@ -20,7 +20,7 @@ type AnsweringMachine struct {
 
 
 func NewAnsweringMachine() *AnsweringMachine {
-	app := AnsweringMachine{"Audrey", "/", "/answer", "/timeout", "/error", "http://recorder.localtunnel.me/recordings", "steve.sfartz@gmail.com"}
+	app := AnsweringMachine{"Audrey", "/", "/answer", "/timeout", "/error", "http://answeringmachine.localtunnel.me/recordings", "steve.sfartz@gmail.com"}
 	return &app
 }
 
@@ -58,7 +58,7 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 	// tropo.Say("Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.", app.Voice)
 	// TODO Create higher level library
 	//tropo.SendRaw(`{"tropo":[{"record":{"say":[{"value":"Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.","voice":"Audrey"},{"event":"timeout","value":"Désolé, nous n'avons pas entendu votre message. Merci de ré-essayer.","voice":"Audrey"}],"name":"foo","url":"https://recording.localtunnel.me/","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"},"choices":{"terminator":"#"}}}]}`)
-	tropo.SendRaw(`{"tropo":[{"say":{"value":"Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 !","voice":"Audrey"}},{"record":{"attempts":3,"bargein":false,"choices":{"terminator":"#"},"maxSilence":5,"maxTime":60,"name":"recording","say":{"value":"Laissez votre message après le bip","voice":"Audrey"},"timeout":10,"url":"https://recordings.localtunnel.me/recordings","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"}}},{"on":{"event":"continue","next":"/answer","required":true}},{"on":{"event":"incomplete","next":"/timeout","required":true}},{"on":{"event":"error","next":"/error","required":true}}]}`)
+	tropo.SendRaw(`{"tropo":[{"say":{"value":"Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...","voice":"Audrey"}},{"record":{"beep":"true","attempts":3,"bargein":false,"choices":{"terminator":"#"},"maxSilence":5,"maxTime":60,"name":"recording","timeout":10,"url":"https://recorder.localtunnel.me/recordings","asyncUpload":"true","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"}}},{"on":{"event":"continue","next":"/answer","required":true}},{"on":{"event":"incomplete","next":"/timeout","required":true}},{"on":{"event":"error","next":"/error","required":true}}]}`)
 
 }
 
@@ -75,7 +75,7 @@ func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req 
 		return
 	}
 
-	glog.V(0).Infof(`SessionID "%s", CallID "%s\n"`, answer.SessionID, answer.CallID)
+	glog.V(0).Infof(`SessionID "%s", CallID "%s"\n`, answer.SessionID, answer.CallID)
 	glog.V(2).Infof("Recording result details: %s\n", answer)
 
 	// say good bye
