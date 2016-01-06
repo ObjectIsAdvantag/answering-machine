@@ -76,3 +76,6 @@ func (d *TropoDriver) ReplyBadInput() {
 	d.writer.WriteHeader(http.StatusInternalServerError)
 	fmt.Fprintf(d.writer, `{ "error": { "status":"%d", "reason":"NOT_IMPLEMENTED", "message":"You hitted an endpoint that is not implemented yet, contact the author to speed up devs" } }`, http.StatusInternalServerError)
 }
+
+
+
