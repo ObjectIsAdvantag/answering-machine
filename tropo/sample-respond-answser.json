@@ -1,0 +1,26 @@
+// Beautified with http://codebeautify.org/jsonviewer#
+{
+  "result": {
+    "sessionId": "6606bafcb9d7b02ed5bdcc88fe581b05",
+    "callId": "2d5841055ad175a17de5f2fe99635ff5",
+    "state": "ANSWERED",
+    "sessionDuration": 17,
+    "sequence": 1,
+    "complete": true,
+    "error": null,
+    "calledid": "33182882566",
+    "actions": {
+      "name": "recording",
+      "attempts": 1,
+      "disposition": "SUCCESS",
+      "confidence": 100,
+      "interpretation": "#",
+      "utterance": "#",
+      "concept": "#",
+      "value": "#",
+      "xml": "<?xml version=\"1.0\"?>\r\n<result grammar=\"0@0d0be85e.vxmlgrammar\">\r\n <interpretation grammar=\"0@0d0be85e.vxmlgrammar\" confidence=\"100\">\r\n        \r\n      <input mode=\"dtmf\">#</input>\r\n    </interpretation>\r\n</result>\r\n",
+      "duration": 6500,
+      "url": "https://recordings.localtunnel.me/recordings"
+    }
+  }
+}

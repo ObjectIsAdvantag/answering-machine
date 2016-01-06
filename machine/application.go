@@ -32,12 +32,14 @@ func (app *AnsweringMachine) RegisterHandlers() {
 }
 
 func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Request) {
+	glog.V(2).Infof("Incoming call")
+
 	tropo := api.NewDriver(w, req)
 
-	glog.V(2).Infof("Incoming call")
 	var session *api.Session
 	var err error
     if session, err = tropo.ReadSession(); err != nil {
+		glog.V(1).Infof("Cannot process incoming payload\n")
 		tropo.ReplyInternalError()
 		return
 	}
@@ -52,17 +54,32 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 	caller := session.From.ID
 	glog.V(0).Infof(`SessionID "%s", CallID "%s", From "+%s"`, session.ID, session.CallID, caller)
 
-	// echo leave a message
-
+	// please leave a message, start recording
 	// tropo.Say("Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.", app.Voice)
-
 	// TODO Create higher level library
 	//tropo.SendRaw(`{"tropo":[{"record":{"say":[{"value":"Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.","voice":"Audrey"},{"event":"timeout","value":"Désolé, nous n'avons pas entendu votre message. Merci de ré-essayer.","voice":"Audrey"}],"name":"foo","url":"https://recording.localtunnel.me/","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"},"choices":{"terminator":"#"}}}]}`)
 	tropo.SendRaw(`{"tropo":[{"say":{"value":"Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 !","voice":"Audrey"}},{"record":{"attempts":3,"bargein":false,"choices":{"terminator":"#"},"maxSilence":5,"maxTime":60,"name":"recording","say":{"value":"Laissez votre message après le bip","voice":"Audrey"},"timeout":10,"url":"https://recordings.localtunnel.me/recordings","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"}}},{"on":{"event":"continue","next":"/answer","required":true}},{"on":{"event":"incomplete","next":"/timeout","required":true}},{"on":{"event":"error","next":"/error","required":true}}]}`)
+
 }
 
 func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req *http.Request) {
-	glog.V(2).Infof("RecordingSuccessHandler")
+	glog.V(2).Infof("Recording response")
+
+	tropo := api.NewDriver(w, req)
+
+	var answer *api.RecordingResult
+	var err error
+	if answer, err = tropo.ReadRecordingAnswer(); err != nil {
+		glog.V(1).Infof("Cannot process recording result\n")
+		tropo.ReplyInternalError()
+		return
+	}
+
+	glog.V(0).Infof(`SessionID "%s", CallID "%s\n"`, answer.SessionID, answer.CallID)
+	glog.V(2).Infof("Recording result details: %s\n", answer)
+
+	// say good bye
+	tropo.Say("Votre message est bien enregistré. Bonne journée !", app.Voice)
 }
 
 func (app *AnsweringMachine) recordingIncompleteHandler(w http.ResponseWriter, req *http.Request) {
