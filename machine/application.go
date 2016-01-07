@@ -63,7 +63,12 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 
 	compo := tropoHandler.NewComposer()
 	compo.AddCommand(&tropo.SayCommand{"Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...", "Audrey"})
-	compo.AddCommand(&tropo.RecordCommand{Maxsilence:5, Timeout:10, Maxtime:60, Name:"recording", URL:"https://recorder.localtunnel.me/recordings"})
+	compo.AddCommand(&tropo.RecordCommand{Beep:true, MaxSilence:5, Timeout:10, MaxTime:60, Name:"recording", URL:"https://recorder.localtunnel.me/recordings"})
+	compo.AddCommand(&tropo.OnCommand{Event:"continue", Next:"/answer", Required:true})
+	compo.AddCommand(&tropo.OnCommand{Event:"incomplete", Next:"/timeout", Required:true})
+	// TODO check if Required could not be changed to false
+	compo.AddCommand(&tropo.OnCommand{Event:"error", Next:"/error", Required:true})
+
 	tropoHandler.ExecuteComposer(compo)
 }
 

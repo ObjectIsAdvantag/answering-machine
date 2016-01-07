@@ -7,23 +7,23 @@ import (
 
 
 
-type recordWrapper struct {
+type recordCommandWrapper struct {
 	RecordCommand `json:"record"`
 }
 
 type RecordCommand struct {
-	Beep          string `json:"beep,omitempty"`
+	Beep          bool `json:"beep,omitempty"`
 	Attempts      int `json:"attempts,omitempty"`
 	Bargein       bool `json:"bargein,omitempty"`
 	Choices*       struct {
 					  Terminator string `json:"terminator,omitempty"`
 				  } `json:"choices,omitempty"`
-	Maxsilence    int `json:"maxSilence,omitempty"`
-	Maxtime       int `json:"maxTime,omitempty"`
+	MaxSilence    int `json:"maxSilence,omitempty"`
+	MaxTime       int `json:"maxTime,omitempty"`
 	Name          string `json:"name,omitempty"`
 	Timeout       int `json:"timeout,omitempty"`
 	URL           string `json:"url,omitempty"`
-	Asyncupload   string `json:"asyncUpload,omitempty"`
+	AsyncUpload   string `json:"asyncUpload,omitempty"`
 	Transcription* struct {
 					  ID  string `json:"id,omitempty"`
 					  URL string `json:"url,omitempty"`
@@ -33,7 +33,7 @@ type RecordCommand struct {
 // Commands interface
 func (cmd *RecordCommand) MarshalJSON() ([]byte, error) {
 
-	wrapper := recordWrapper{*cmd}
+	wrapper := recordCommandWrapper{*cmd}
 
 	b, err := json.Marshal(wrapper)
 	if err != nil {

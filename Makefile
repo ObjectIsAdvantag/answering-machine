@@ -18,8 +18,8 @@ recorder: build-recorder
 
 .PHONY: run
 run:
-	(./answering-machine.exe -p 8080 -logtostderr=true -v=5 &)
-	(./recorder-server.exe -p 8081 -logtostderr=true -v=5 &)
+	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 &)
+	(./recorder-server.exe -port 8081 -logtostderr=true -v=5 &)
 	(lt -p 8080 -s answeringmachine &)
 	(lt -p 8081 -s recorder &)
 

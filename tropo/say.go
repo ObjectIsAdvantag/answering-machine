@@ -6,7 +6,7 @@ import (
 )
 
 
-type sayWrapper struct {
+type sayCommandWrapper struct {
 	SayCommand `json:"say"`
 }
 
@@ -18,7 +18,7 @@ type SayCommand struct {
 // Commands interface
 func (cmd *SayCommand) MarshalJSON() ([]byte, error) {
 
-	wrapper := sayWrapper{*cmd}
+	wrapper := sayCommandWrapper{*cmd}
 
 	b, err := json.Marshal(wrapper)
 	if err != nil {
