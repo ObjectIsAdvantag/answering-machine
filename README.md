@@ -1,15 +1,6 @@
 # Goal
 
-The cross device answering machine can be used to unify voice messages among all your devices
-
-
-# Scenarios
-
-Reserve a phone number from a Voice Service, ie your new answering machine
-
-[Optional] Transfer incoming phone calls to your answering machine phone number (wire, mobile phones)
-
-Define notification channels : SMS, mail, instant messengers to be informed when you receive new phone calls
+A #golang Answering Machine backed by Cisco Tropo Communication Services 
 
 
 # Implementation
@@ -20,17 +11,28 @@ Define notification channels : SMS, mail, instant messengers to be informed when
    - error structure
    - v0.1
 
-[x] MVP with a Cisco backend (Tropo, Spark)
-   - Provisioning scripts (postman collection)
-   - local hosting tunnelled 
-   - Tropo voice services
+[x] MVP with a Cisco Tropo's communication backend (Call/Voice/Recording)
+   - golang encapsulation of the Tropo Web API (Session, Record, Say)  
+   - provisioning env (registration, phone number) via Tropo REST API (see postman collection)
+   - local tests via localtunnel 
    - v0.2
 
-[ ] Notification to a Spark room
+[ ] Add end-user Experience
+    - recordings persistance to Bolt
+    - API to browse recordings
+    
+[ ] Add Notification
+   - TBD : Slack, Cisco Spark
 
-[ ] Hosting on google app engine
+[ ] Hosting on a public cloud 
+   - TBD : Google, Amazon
    
-[ ] Switch hosting to Cisco shipped
+[ ] Enhancements
+   - Secure Recorder via BasicAuth
+   - Enhance Trop encapsulation (Voices)
+   
+[ ] Experiment hosting to Cisco shipped
+   - TODO : resolve issue via drone.yaml 
 
 
 # Bootstrapping 
