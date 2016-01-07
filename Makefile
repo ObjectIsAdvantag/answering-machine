@@ -18,9 +18,17 @@ recorder: build-recorder
 
 .PHONY: run
 run:
-	(./answering-machine.exe -logtostderr=true -v=5 &)
-	(./recorder-server.exe -logtostderr=true -v=5 &)
+	(./answering-machine.exe -p 8080 -logtostderr=true -v=5 &)
+	(./recorder-server.exe -p 8081 -logtostderr=true -v=5 &)
 	(lt -p 8080 -s answeringmachine &)
+	(lt -p 8081 -s recorder &)
+
+.PHONY: capture
+capture:
+	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 &)
+	(../smartproxy/smartproxy.exe -capture -port 9090 -serve 127.0.0.1:8080 &)
+	(./recorder-server.exe -port 8081 -logtostderr=true -v=5 &)
+	(lt -p 9090 -s answeringmachine &)
 	(lt -p 8081 -s recorder &)
 
 .PHONY: dev

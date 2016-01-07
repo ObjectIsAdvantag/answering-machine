@@ -6,7 +6,7 @@ import (
 )
 
 
-type SessionWrapper struct {
+type sessionWrapper struct {
 	Session `json:"session"`
 }
 

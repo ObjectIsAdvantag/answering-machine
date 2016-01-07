@@ -5,7 +5,7 @@ import (
 )
 
 
-type RecordingResultWrapper struct {
+type recordingResultWrapper struct {
 	RecordingResult `json:"result"`
 }
 
