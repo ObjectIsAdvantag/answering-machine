@@ -1,5 +1,5 @@
 GOFLAGS = -tags netgo
-USERNAME = ObjectIsAdvantag
+GITHUB_ACCOUNT = ObjectIsAdvantag
 
 default: dev
 
@@ -17,14 +17,14 @@ recorder: build-recorder
 
 .PHONY: run
 run:
-	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 &)
+	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 --conf=private.json &)
 	(./recorder-server.exe -port 8081 -logtostderr=true -v=5 &)
 	(lt -p 8080 -s answeringmachine &)
 	(lt -p 8081 -s recorder &)
 
 .PHONY: capture
 capture:
-	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 &)
+	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 --conf=private.json &)
 	(../smartproxy/smartproxy.exe -capture -port 9090 -serve 127.0.0.1:8080 &)
 	(./recorder-server.exe -port 8081 -logtostderr=true -v=5 &)
 	(lt -p 9090 -s answeringmachine &)
@@ -32,7 +32,7 @@ capture:
 
 .PHONY: dev
 dev: clean build
-	./answering-machine.exe -logtostderr=true -v=5
+	./answering-machine.exe -logtostderr=true -v=5 --conf=private.json
 
 .PHONY: build
 build: clean
@@ -40,7 +40,7 @@ build: clean
 
 .PHONY: debug
 debug:
-	godebug build $(GOFLAGS) -instrument github.com/$(USERNAME)/answering-machine/machine,github.com/$(USERNAME)/answering-machine/tropo answering-machine.go
+	godebug build $(GOFLAGS) -instrument github.com/$(GITHUB_ACCOUNT)/answering-machine/machine,github.com/$(GITHUB_ACCOUNT)/answering-machine/tropo answering-machine.go
 	./answering-machine.debug -logtostderr=true -v=5
 
 .PHONY: linux
@@ -53,7 +53,7 @@ windows:
 
 .PHONY: docker
 docker: linux
-	docker build -t $(USERNAME)/answering-machine .
+	docker build -t $(GITHUB_ACCOUNT)/answering-machine .
 
 .PHONY: clean
 clean:

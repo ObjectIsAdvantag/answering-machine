@@ -43,10 +43,12 @@ func NewAnsweringMachine(welcomeMessage string, welcomeVoice *tropo.Voice, recor
 		"/timeout",
 		"/error",
 		recordingEndpoint,
-		transcriptsEmail,
+		"mailto:"+transcriptsEmail,
 		checkerPhoneNumber,
 		checkerFirstName,
 	}
+
+	glog.V(2).Infof("Created new AnsweringMachine with configuration %v", app)
 
 	return &app
 }

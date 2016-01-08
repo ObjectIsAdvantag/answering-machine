@@ -1,0 +1,9 @@
+{
+  "GOLAM_WELCOME":               "Welcome, please leave a message after the beep",
+  "GOLAM_VOICE":                 "Audrey",
+  "GOLAM_CHECKER_NUMBER" :       "",
+  "GOLAM_CHECKER_NAME" :         "",
+  "GOLAM_SECRET_CODE" :          "1234",
+  "GOLAM_RECORDER_ENDPOINT" :    "",
+  "GOLAM_TRANSCRIPTS_EMAIL" :    ""
+}

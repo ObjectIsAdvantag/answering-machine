@@ -11,3 +11,6 @@ answering-machine
 log/
 uploads/
 capture.db
+
+# sensitive data
+private.json
