@@ -48,7 +48,7 @@ func NewAnsweringMachine(welcomeMessage string, welcomeVoice *tropo.Voice, recor
 		checkerFirstName,
 	}
 
-	glog.V(2).Infof("Created new AnsweringMachine with configuration %v", app)
+	glog.V(2).Infof("Created new AnsweringMachine with configuration %s", app)
 
 	return &app
 }

@@ -28,7 +28,6 @@ func main() {
 	flag.StringVar(&name, "name", "Answering Machine", "name of the service, defaults to Answering Machine")
 	flag.StringVar(&properties, "conf", "config.json", "answering machine configuration filename")
 	flag.BoolVar(&showVersion, "version", false, "display version")
-
 	flag.Parse()
 
 	// Read configuration (env variables then properties, then default values)
@@ -38,8 +37,7 @@ func main() {
 		conf.Use(configure.NewJSONFromFile(properties))
 	}
 	welcome := conf.String("GOLAM_WELCOME", "Welcome, Leave a message after the bip.", "your welcome message")
-	// PENDING Voice selection not implemented
-	voice := tropo.VOICE_AUDREY
+	voiceCode := conf.String("GOLAM_VOICE", "Vanessa", "Machine's default message for Text To Speach")
 	checkerPhoneNumber := conf.String("GOLAM_CHECKER_NUMBER", "", "the checker phone number to automate new messages check")
 	checkerName := conf.String("GOLAM_CHECKER_NAME", "", "to enhance the welcome message of the new messages checker")
 	recorderEndpoint := conf.String("GOLAM_RECORDER_ENDPOINT", "", "to receive the recordings")
@@ -56,7 +54,7 @@ func main() {
 	}
 
 	service := machine.NewAnsweringMachine(*welcome,
-		voice,
+		tropo.GetVoice(*voiceCode),
 		*recorderEndpoint,
 		*transcriptsEmail,
 		*checkerPhoneNumber,
