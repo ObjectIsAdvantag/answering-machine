@@ -8,30 +8,55 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/ObjectIsAdvantag/answering-machine/tropo"
+	"fmt"
 )
 
 
 type AnsweringMachine struct {
-	Voice						*tropo.TropoVoice // see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
-	WelcomeMessageRoute			string // route to the welcome message
-	SuccessRoute				string // invoked after message are recorded
-	IncompleteRoute				string // invoked if a timeout occurs
-	CommunicationErrorRoute		string // invoked if the recording failed due to communication issues between Tropo and the AnsweringMachine
-	RecorderEndpoint			string // URI to record the messages
-	TranscriptsReceiver			string // email of the transcriptions receiver
+	welcomeMessage				string     // message played to callers
+	defaultVoice				*tropo.Voice // see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
+	welcomeMessageRoute			string    // route to the welcome message
+	successRoute				string       // invoked after message are recorded
+	incompleteRoute				string    // invoked if a timeout occurs
+	communicationErrorRoute		string    // invoked if the recording failed due to communication issues between Tropo and the AnsweringMachine
+	recorderEndpoint			string       // URI to record the messages
+	transcriptsReceiver			string    // email of the transcriptions receiver
+	checkerPhoneNumber			string     // phone number to check messages
+	checkerFirstName			string       // for greeting purpose
+
 }
 
 
-func NewAnsweringMachine() *AnsweringMachine {
-	app := AnsweringMachine{tropo.VOICE_AUDREY, "/", "/answer", "/timeout", "/error", "http://answeringmachine.localtunnel.me/recordings", "mailto:steve.sfartz@gmail.com"}
+func NewAnsweringMachine(welcomeMessage string, welcomeVoice *tropo.Voice, recordingEndpoint string, transcriptsEmail string, checkerPhoneNumber string, checkerFirstName string) *AnsweringMachine {
+	if welcomeMessage == "" {
+		welcomeMessage = "Laissez votre message après le bip sonore."
+	}
+	if welcomeVoice == nil {
+		welcomeVoice = tropo.VOICE_AUDREY
+	}
+
+	app := AnsweringMachine{
+		welcomeMessage,
+		welcomeVoice,
+		"/",
+		"/answer",
+		"/timeout",
+		"/error",
+		recordingEndpoint,
+		transcriptsEmail,
+		checkerPhoneNumber,
+		checkerFirstName,
+	}
+
 	return &app
 }
 
+
 func (app *AnsweringMachine) RegisterHandlers() {
-	http.HandleFunc(app.WelcomeMessageRoute, app.welcomeHandler)
-	http.HandleFunc(app.SuccessRoute, app.recordingSuccessHandler)
-	http.HandleFunc(app.IncompleteRoute, app.recordingIncompleteHandler)
-	http.HandleFunc(app.CommunicationErrorRoute, app.recordingErrorHandler)
+	http.HandleFunc(app.welcomeMessageRoute, app.welcomeHandler)
+	http.HandleFunc(app.successRoute, app.recordingSuccessHandler)
+	http.HandleFunc(app.incompleteRoute, app.recordingIncompleteHandler)
+	http.HandleFunc(app.communicationErrorRoute, app.recordingErrorHandler)
 }
 
 func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Request) {
@@ -57,11 +82,17 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 	caller := session.From.ID
 	glog.V(0).Infof(`SessionID "%s", CallID "%s", From "+%s"`, session.ID, session.CallID, caller)
 
+	// redirect to check messages if the answering machine registered owner is calling
+	if caller == app.checkerPhoneNumber {
+		app.checkMessagesHandlerInternal(tropoHandler, session, w, req)
+		return
+	}
+
 	// please leave a message, start recording
 	compo := tropoHandler.NewComposer()
-	compo.AddCommand(&tropo.SayCommand{Message:"Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...", Voice:tropo.VOICE_AUDREY})
+	compo.AddCommand(&tropo.SayCommand{Message:app.welcomeMessage, Voice:app.defaultVoice})
 	choices := tropo.RecordChoices{Terminator:"#"}
-	transcript := tropo.RecordTranscription{ID:session.CallID, URL:app.TranscriptsReceiver}
+	transcript := tropo.RecordTranscription{ID:session.CallID, URL:app.transcriptsReceiver}
 
 	compo.AddCommand(&tropo.RecordCommand{Bargein:true, Attempts:3, Beep:true, Choices:&choices, MaxSilence:3, Timeout:10, MaxTime:60, Name:"recording", URL:"https://recorder.localtunnel.me/recordings", AsyncUpload:true, Transcription:&transcript})
 	compo.AddCommand(&tropo.OnCommand{Event:"continue", Next:"/answer", Required:true})
@@ -70,6 +101,24 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 
 	tropoHandler.ExecuteComposer(compo)
 }
+
+
+func (app *AnsweringMachine) checkMessagesHandlerInternal(tropoHandler *tropo.CommunicationHandler, session *tropo.Session,w http.ResponseWriter, req *http.Request) {
+	// check if new messages
+	newMessage := 0
+	if newMessage == 0 {
+		msg := "Pas de nouveau message, bonne journée"
+		if app.checkerFirstName != "" {
+			msg = fmt.Sprintf("Bonjour %s, pas de nouveau message, bonne journée !", app.checkerFirstName)
+		}
+
+		tropoHandler.Say(msg, app.defaultVoice)
+		return
+	}
+
+	// TODO: play message
+}
+
 
 func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req *http.Request) {
 	glog.V(2).Infof("Recording response")

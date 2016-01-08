@@ -12,6 +12,7 @@ import (
 
 	"github.com/ObjectIsAdvantag/answering-machine/server"
 	"github.com/ObjectIsAdvantag/answering-machine/machine"
+	"github.com/ObjectIsAdvantag/answering-machine/tropo"
 )
 
 const version = "v0.2.1"
@@ -35,7 +36,13 @@ func main() {
 		glog.Errorf("Invalid port: %s (%s)\n", port, err)
 	}
 
-	service := machine.NewAnsweringMachine()
+	service := machine.NewAnsweringMachine("Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...",
+		tropo.VOICE_AUDREY,
+		"http://answeringmachine.localtunnel.me/recordings",
+		"mailto:steve.sfartz@gmail.com",
+		"XXXXXXXXXX",
+		"Stève")
+
 	glog.Infof("Starting %s, version: %s\n", name, version)
 
 	if err := server.Run(port, service, version, name); err != nil {

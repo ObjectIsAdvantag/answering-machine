@@ -136,7 +136,7 @@ func (handler *CommunicationHandler) ExecuteCommand(cmd Command) error {
 }
 
 
-func (handler *CommunicationHandler) Say(message string, voice *TropoVoice) error {
+func (handler *CommunicationHandler) Say(message string, voice *Voice) error {
 	// Assert message is not null, nor empty
 	if len(message) == 0 {
 		glog.V(0).Info("Implementation error : Bad API usage, cannot read twice incoming payload\n")
@@ -146,7 +146,6 @@ func (handler *CommunicationHandler) Say(message string, voice *TropoVoice) erro
 	cmd := &SayCommand{Message:message, Voice:voice}
 	return handler.ExecuteCommand(cmd)
 }
-
 
 func (handler *CommunicationHandler) SendRawJSON(jsonString string) error {
 	if handler.hasWritten {
