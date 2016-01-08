@@ -11,7 +11,7 @@ import (
 	"github.com/ObjectIsAdvantag/answering-machine/machine"
 )
 
-const version = "v0.2"
+const version = "v0.2.1"
 
 func main() {
 	var showVersion bool

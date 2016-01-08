@@ -1,7 +1,41 @@
 # Goal
 
-A #golang Answering Machine backed by Cisco Tropo Communication Services 
+A #GOLang Answering Machine backed by Cisco Tropo Communication Services 
 
+
+# How to use it
+
+0. Download binaries from releases, see https://github.com/ObjectIsAdvantag/answering-machine/releases
+   - or git clone and build (make all)
+   
+1. Signup at http://tropo.com
+   - Note : Your login/password credentials will be used to authenticate against the Tropo REST API (provisonning) 
+
+2. Run provision.sh
+   - TROPO_USER
+   - TROPO_PASSWORD
+   - TROPO_COUNTRY_PREFIX       # Example : 1, 44, ... note that France, Germany need escaladation to Cisco teams
+   - GOLAM_ENDPOINT             # Example : http://mygolam.localtunnel.me 
+   - GOLAM_EMAIL_TRANSCRIPT     # Email where to send your messages
+ 
+/!\ Write down your brand new Answering Machine phone number
+   
+3. Launch your answering machine
+   - WINDOWS > golam.exe -port 8080 -logtostderr=true -v=5
+   - Linux   > golam -port 8080 -logtostderr=true -v=5 
+   - DOCKER  # docker run -d -port 8080:8080 ObjectIsAdvantag/golam
+
+5. If your host is not visible on the internet, install localtunnel
+   > npm install -g localtunnel
+   > lt -p 8080 -d mygolam
+
+6. Call your answering machine and leave a message
+   - check your email
+   - browse through your messages
+
+7. Optional : launch the messages recorder
+   - GOLAM_RECORDER
+   
 
 # Roadmap
 
@@ -17,11 +51,14 @@ A #golang Answering Machine backed by Cisco Tropo Communication Services
    - local tests via localtunnel 
    - v0.2
 
-[ ] Add end-user Experience
-    - recordings persistance to Bolt
-    - API to browse recordings
-    
-[ ] Add Notification
+[x] Add end-user Experience
+   - installation guidelines 
+   - recordings persistance (BoltDB)
+   - API to browse messages (date, duration, recording, transcript if available)
+   - Enhanced Tropo encapsulation (TropoVoice)
+   - IN PROGRESS
+      
+[ ] Add Notifications
    - TBD : Slack, Cisco Spark
 
 [ ] Hosting on a public cloud 
@@ -29,15 +66,14 @@ A #golang Answering Machine backed by Cisco Tropo Communication Services
    
 [ ] Enhancements
    - Secure Recorder via BasicAuth
-   - Enhance Trop encapsulation (Voices)
    
 [ ] Experiment hosting to Cisco shipped
    - TODO : resolve issue via drone.yaml 
 
 
-# Bootstrapping 
+# Want to contribute 
 
-## Take your dev hat and ...
+Take your dev hat and ...
 
 1. From Tropo.com, create a developper account.
 
@@ -83,26 +119,6 @@ In a third terminal, or postman, call the answering machine healthcheck endpoint
 ```
 > curl -v -X GET https://answeringmachine.localtunnel.me/ping
 ```
-
-## Traffic inspection (Tropo <=> Answering machine)
-
-### 1. Incoming call (to the answering machine)
-
-check API reference : https://www.tropo.com/docs/webapi/session 
-
-#### Captured from Phono (Web emulator)
-
-{"session":{"id":"42d71155dc14c8ad94af1fa24c652324","accountId":"5048353","timestamp":"2016-01-05T01:47:37.395Z","userType":"HUMAN","initialText":null,"callId":"74b2d7a1530e301f2dd021e46914f5a9","to":{"id":"9999556971","name":null,"channel":"V
-OICE","network":"SIP"},"from":{"id":"tropo.com phono","name":null,"channel":"VOICE","network":"SIP"},"headers":{"Record-Route":"<sip:198.11.254.102:5060;transport=udp;lr>","Content-Length":"314","To":"sip:9999556971@sip.tropo.com","Contact":"<
-sip:54.208.174.25:5060;transport=udp>","User-Agent":"Phono","Max-Forwards":"68","x-sid":"12d84bdefaf15f942e22ea2cdb8ecf8d","CSeq":"1 INVITE","Via":"SIP/2.0/UDP 198.11.254.102:5060;branch=z9hG4bK17hwja9as4gov;rport=5060;received=10.108.198.74",
-"x-phono-sessionid":"8eed2c2c-d00f-4cf9-ac42-64ff5cf19a0d@pgw-v11g.phono.com","Call-ID":"1639jlhk6ch5x","Content-Type":"application/sdp","From":"<sip:tropo.com%20phono@pgw-v11g.phono.com>;tag=3c7dny90z5si"}}}
-
-#### Captured from a Device (calling device)
-
-{"session":{"id":"5176f28e6ba0453c30ba71e8e53ffacc","accountId":"5048353","timestamp":"2016-01-05T01:52:11.039Z","userType":"HUMAN","initialText":null,"callId":"ebc7bdc19ce4a4c77d4fdf5c5bd5311f","to":{"id":"3474913912","name":null,"channel":"V
-OICE","network":"SIP"},"from":{"id":"33954218763","name":null,"channel":"VOICE","network":"SIP"},"headers":{"Record-Route":"<sip:198.11.254.102:5060;transport=udp;lr>","Content-Length":"329","To":"<sip:3474913912@192.168.3.83>","Contact":"<sip
-:+33954218763@67.231.1.115:5060>","Max-Forwards":"66","x-sid":"98ab30c2c814b70096b479a4cfdeab13","Allow":"INVITE","CSeq":"213969 INVITE","Via":"SIP/2.0/UDP 198.11.254.102:5060;branch=z9hG4bKk50xh1h5jfr7;rport=5060;received=10.108.198.74","Call
--ID":"292328416_134037636@67.231.1.115","Content-Type":"application/sdp","Accept":"application/sdp","remote-party-id":"<sip:+33954218763@67.231.1.115:5060>;privacy=off;screen=no","From":"<sip:33954218763@67.231.1.115>;tag=gK0c018915"}}}
 
 
 # License
