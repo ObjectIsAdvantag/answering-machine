@@ -3,7 +3,7 @@
 A #golang Answering Machine backed by Cisco Tropo Communication Services 
 
 
-# Implementation
+# Roadmap
 
 [X] back-end API structure
    - args, version, glog
@@ -11,7 +11,7 @@ A #golang Answering Machine backed by Cisco Tropo Communication Services
    - error structure
    - v0.1
 
-[X] MVP with a Cisco Tropo's communication backend (Call/Voice/Recording)
+[X] MVP with Cisco Tropo's communication backend (Call/Voice/Recording)
    - golang encapsulation of the Tropo Web API (Session, Record, Say)  
    - provisioning env (registration, phone number) via Tropo REST API (see postman collection)
    - local tests via localtunnel 

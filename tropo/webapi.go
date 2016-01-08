@@ -133,14 +133,14 @@ func (handler *CommunicationHandler) ExecuteCommand(cmd Command) error {
 }
 
 
-func (handler *CommunicationHandler) Say(message string, voice string) error {
+func (handler *CommunicationHandler) Say(message string, voice *TropoVoice) error {
 	// Assert message is not null, nor empty
 	if len(message) == 0 {
 		glog.V(0).Info("Implementation error : Bad API usage, cannot read twice incoming payload\n")
 		return errors.New("Bad API usage, empty message")
 	}
 
-	cmd := &SayCommand{Value:message, Voice:voice}
+	cmd := &SayCommand{Message:message, Voice:voice}
 	return handler.ExecuteCommand(cmd)
 }
 

@@ -11,8 +11,8 @@ type sayCommandWrapper struct {
 }
 
 type SayCommand struct {
-	Value string `json:"value"`
-	Voice string `json:"voice"`
+	Message string `json:"value"`
+	Voice 	*TropoVoice `json:"voice,omitempty"`
 }
 
 // Commands interface

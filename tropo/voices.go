@@ -1,18 +1,27 @@
 package tropo
 
 
-type Voice struct {
-	name 	string
-	Lang	language
-	gender	gender
-	Env	 	environment
+import (
+	"encoding/json"
+)
+
+
+type TropoVoice struct {
+	name 	string `json:"voice"`
+	Lang	language  `json:"-"`
+	Gender	gender    `json:"-"`
+	Env	 	environment `json:"-"`
 }
 
-func (voice *Voice) Name() string {
+func (voice *TropoVoice) MarshalJSON() ([]byte, error) {
+	return json.Marshal(voice.name)
+}
+
+func (voice *TropoVoice) Name() string {
 	return voice.name
 }
 
-type environment int // unexported type users can't construct their own.
+type environment int
 const (
 	DEV environment = iota
 	PROD
@@ -23,7 +32,7 @@ const (
 	fr_FR language = "fr_FR"
 )
 
-type gender int // unexported type users can't construct their own.
+type gender int
 const (
 	FEMALE gender = iota
 	MALE
@@ -32,6 +41,8 @@ const (
 
 // TODO : extend the list of voices for each env : Dev / Prod
 // see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
-var AUDREY = Voice{"Audrey", fr_FR, FEMALE, DEV}
+var VOICE_AUDREY = &TropoVoice{"Audrey", fr_FR, FEMALE, DEV}
+
+
 
 

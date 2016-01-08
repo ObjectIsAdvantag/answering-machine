@@ -1,4 +1,3 @@
-
 GOFLAGS = -tags netgo
 USERNAME = ObjectIsAdvantag
 
@@ -46,11 +45,11 @@ debug:
 
 .PHONY: linux
 linux:
-	GOOS=linux GOARCH=amd64 go build $(GOFLAGS)
+	GOOS=linux GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
 
 .PHONY: windows
 windows:
-	GOOS=windows GOARCH=amd64 go build $(GOFLAGS)
+	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
 
 .PHONY: docker
 docker: linux

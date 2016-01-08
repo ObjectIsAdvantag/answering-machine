@@ -10,7 +10,7 @@ import (
 
 
 type AnsweringMachine struct {
-	Voice						string // see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
+	Voice						*tropo.TropoVoice // see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
 	WelcomeMessageRoute			string // route to the welcome message
 	SuccessRoute				string // invoked after message are recorded
 	IncompleteRoute				string // invoked if a timeout occurs
@@ -21,7 +21,7 @@ type AnsweringMachine struct {
 
 
 func NewAnsweringMachine() *AnsweringMachine {
-	app := AnsweringMachine{"Audrey", "/", "/answer", "/timeout", "/error", "http://answeringmachine.localtunnel.me/recordings", "mailto:steve.sfartz@gmail.com"}
+	app := AnsweringMachine{tropo.VOICE_AUDREY, "/", "/answer", "/timeout", "/error", "http://answeringmachine.localtunnel.me/recordings", "mailto:steve.sfartz@gmail.com"}
 	return &app
 }
 
@@ -57,7 +57,7 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 
 	// please leave a message, start recording
 	compo := tropoHandler.NewComposer()
-	compo.AddCommand(&tropo.SayCommand{"Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...", "Audrey"})
+	compo.AddCommand(&tropo.SayCommand{Message:"Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...", Voice:tropo.VOICE_AUDREY})
 	choices := tropo.RecordChoices{Terminator:"#"}
 	transcript := tropo.RecordTranscription{ID:session.CallID, URL:app.TranscriptsReceiver}
 
@@ -86,7 +86,7 @@ func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req 
 	glog.V(2).Infof("Recording result details: %s\n", answer)
 
 	// say good bye
-	tropoHandler.Say("Votre message est bien enregistré. Bonne journée !", app.Voice)
+	tropoHandler.Say("Votre message est bien enregistré. Bonne journée !", tropo.VOICE_AUDREY)
 }
 
 func (app *AnsweringMachine) recordingIncompleteHandler(w http.ResponseWriter, req *http.Request) {
@@ -96,8 +96,5 @@ func (app *AnsweringMachine) recordingIncompleteHandler(w http.ResponseWriter, r
 func (app *AnsweringMachine) recordingErrorHandler(w http.ResponseWriter, req *http.Request) {
 	glog.V(2).Infof("RecordingErrordHandler")
 }
-
-
-
 
 
