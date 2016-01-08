@@ -1,4 +1,7 @@
-// REST API Wrapper
+// Copyright 2015, Stève Sfartz
+// Licensed under the MIT License
+
+//REST API Wrapper
 //
 // see postman collection
 //

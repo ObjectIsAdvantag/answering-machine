@@ -1,3 +1,6 @@
+// Copyright 2015, Stève Sfartz
+// Licensed under the MIT License
+
 //
 // Utility Server to store Tropo recordings
 //

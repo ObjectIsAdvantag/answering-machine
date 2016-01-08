@@ -39,37 +39,26 @@ A #GOLang Answering Machine backed by Cisco Tropo Communication Services
 
 # Roadmap
 
-[X] back-end API structure
-   - args, version, glog
-   - healthcheck
-   - error structure
-   - v0.1
+Check Releases and Milestones for more details
 
-[X] MVP with Cisco Tropo's communication backend (Call/Voice/Recording)
+FUTURE : see vNext Milestone
+   
+IN PROGRESS: see v0.3 Milestone
+   [ ] installation guidelines 
+   [ ] recordings persistance (BoltDB)
+   [ ] API to browse messages (date, duration, recording, transcript if available)
+   [X] Enhanced Tropo encapsulation (TropoVoice)
+
+v0.2: MVP with Cisco Tropo's communication backend (Call/Voice/Recording)
    - golang encapsulation of the Tropo Web API (Session, Record, Say)  
    - provisioning env (registration, phone number) via Tropo REST API (see postman collection)
    - local tests via localtunnel 
-   - v0.2
-
-[x] Add end-user Experience
-   - installation guidelines 
-   - recordings persistance (BoltDB)
-   - API to browse messages (date, duration, recording, transcript if available)
-   - Enhanced Tropo encapsulation (TropoVoice)
-   - IN PROGRESS
+   
+v0.1: back-end API structure
+   - args, version, glog
+   - healthcheck
+   - error structure
       
-[ ] Add Notifications
-   - TBD : Slack, Cisco Spark
-
-[ ] Hosting on a public cloud 
-   - TBD : Google, Amazon
-   
-[ ] Enhancements
-   - Secure Recorder via BasicAuth
-   
-[ ] Experiment hosting to Cisco shipped
-   - TODO : resolve issue via drone.yaml 
-
 
 # Want to contribute 
 
