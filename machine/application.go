@@ -21,7 +21,7 @@ type AnsweringMachine struct {
 
 
 func NewAnsweringMachine() *AnsweringMachine {
-	app := AnsweringMachine{"Audrey", "/", "/answer", "/timeout", "/error", "http://answeringmachine.localtunnel.me/recordings", "steve.sfartz@gmail.com"}
+	app := AnsweringMachine{"Audrey", "/", "/answer", "/timeout", "/error", "http://answeringmachine.localtunnel.me/recordings", "mailto:steve.sfartz@gmail.com"}
 	return &app
 }
 
@@ -56,17 +56,14 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 	glog.V(0).Infof(`SessionID "%s", CallID "%s", From "+%s"`, session.ID, session.CallID, caller)
 
 	// please leave a message, start recording
-	// tropo.Say("Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.", app.Voice)
-
-	//tropo.SendRaw(`{"tropo":[{"record":{"say":[{"value":"Bienvenue chez Stève, Valérie, Jeanne et Olivia. Bonne année 2016 ! Laissez votre message.","voice":"Audrey"},{"event":"timeout","value":"Désolé, nous n'avons pas entendu votre message. Merci de ré-essayer.","voice":"Audrey"}],"name":"foo","url":"https://recording.localtunnel.me/","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"},"choices":{"terminator":"#"}}}]}`)
-	//tropoHandler.SendRawJSON(`{"tropo":[{"say":{"value":"Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...","voice":"Audrey"}},{"record":{"beep":"true","attempts":3,"bargein":false,"choices":{"terminator":"#"},"maxSilence":5,"maxTime":60,"name":"recording","timeout":10,"url":"https://recorder.localtunnel.me/recordings","asyncUpload":"true","transcription":{"id":"1234","url":"mailto:steve.sfartz@gmail.com"}}},{"on":{"event":"continue","next":"/answer","required":true}},{"on":{"event":"incomplete","next":"/timeout","required":true}},{"on":{"event":"error","next":"/error","required":true}}]}`)
-
 	compo := tropoHandler.NewComposer()
 	compo.AddCommand(&tropo.SayCommand{"Bienvenue chez Jeanne, Olivia, Stève et Valérie. Bonne année 2016 ! Après le bip c'est à vous...", "Audrey"})
-	compo.AddCommand(&tropo.RecordCommand{Beep:true, MaxSilence:5, Timeout:10, MaxTime:60, Name:"recording", URL:"https://recorder.localtunnel.me/recordings"})
+	choices := tropo.RecordChoices{Terminator:"#"}
+	transcript := tropo.RecordTranscription{ID:session.CallID, URL:app.TranscriptsReceiver}
+
+	compo.AddCommand(&tropo.RecordCommand{Bargein:true, Attempts:3, Beep:true, Choices:&choices, MaxSilence:3, Timeout:10, MaxTime:60, Name:"recording", URL:"https://recorder.localtunnel.me/recordings", AsyncUpload:true, Transcription:&transcript})
 	compo.AddCommand(&tropo.OnCommand{Event:"continue", Next:"/answer", Required:true})
 	compo.AddCommand(&tropo.OnCommand{Event:"incomplete", Next:"/timeout", Required:true})
-	// TODO check if Required could not be changed to false
 	compo.AddCommand(&tropo.OnCommand{Event:"error", Next:"/error", Required:true})
 
 	tropoHandler.ExecuteComposer(compo)

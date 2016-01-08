@@ -15,20 +15,26 @@ type RecordCommand struct {
 	Beep          bool `json:"beep,omitempty"`
 	Attempts      int `json:"attempts,omitempty"`
 	Bargein       bool `json:"bargein,omitempty"`
-	Choices*       struct {
-					  Terminator string `json:"terminator,omitempty"`
-				  } `json:"choices,omitempty"`
+	Choices 	  *RecordChoices `json:"choices,omitempty"`
 	MaxSilence    int `json:"maxSilence,omitempty"`
 	MaxTime       int `json:"maxTime,omitempty"`
 	Name          string `json:"name,omitempty"`
 	Timeout       int `json:"timeout,omitempty"`
 	URL           string `json:"url,omitempty"`
-	AsyncUpload   string `json:"asyncUpload,omitempty"`
-	Transcription* struct {
-					  ID  string `json:"id,omitempty"`
-					  URL string `json:"url,omitempty"`
-				  } `json:"transcription,omitempty"`
+	AsyncUpload   bool `json:"asyncUpload,omitempty"`
+	Transcription *RecordTranscription `json:"transcription,omitempty"`
 }
+
+type RecordChoices struct {
+	Terminator string `json:"terminator,omitempty"`
+}
+
+type RecordTranscription struct {
+	ID  string `json:"id,omitempty"`
+	URL string `json:"url,omitempty"`
+}
+
+
 
 // Commands interface
 func (cmd *RecordCommand) MarshalJSON() ([]byte, error) {

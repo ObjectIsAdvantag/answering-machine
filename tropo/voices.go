@@ -1,12 +1,15 @@
 package tropo
 
 
-// TODO : dynamically generate the list of voices for each env : Dev / Prod by calling Tropo REST API
-
 type Voice struct {
-	Env	 	environment
-	Lang	language
 	name 	string
+	Lang	language
+	gender	gender
+	Env	 	environment
+}
+
+func (voice *Voice) Name() string {
+	return voice.name
 }
 
 type environment int // unexported type users can't construct their own.
@@ -16,12 +19,19 @@ const (
 )
 
 type language string
-
 const (
-	FR language = "FR"
+	fr_FR language = "fr_FR"
+)
+
+type gender int // unexported type users can't construct their own.
+const (
+	FEMALE gender = iota
+	MALE
 )
 
 
-var AUDREY = Voice{DEV, FR, "Audrey"}
+// TODO : extend the list of voices for each env : Dev / Prod
+// see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
+var AUDREY = Voice{"Audrey", fr_FR, FEMALE, DEV}
 
 
