@@ -1,9 +1,13 @@
 {
-  "GOLAM_WELCOME":               "Welcome, please leave a message after the beep",
-  "GOLAM_VOICE":                 "Veronica",
-  "GOLAM_CHECKER_NUMBER" :       "",
-  "GOLAM_CHECKER_NAME" :         "",
-  "GOLAM_SECRET_CODE" :          "1234",
-  "GOLAM_RECORDER_ENDPOINT" :    "",
-  "GOLAM_TRANSCRIPTS_EMAIL" :    ""
+  "GOLAM_WELCOME_MESSAGE":       "Welcome, please leave a message after the beep",
+
+  "GOLAM_CHECKER_NAME" :         "Steve",
+  "GOLAM_CHECKER_NUMBER" :       "<place your phone number>",
+  "GOLAM_CKECKER_PIN" :          "",
+
+  "GOLAM_RECORDER_ENDPOINT" :    "https://recorder.localtunnel.me/recordings/",
+
+  "GOLAM_AUDIO_ENDPOINT" :       "https://recorder.localtunnel.me/audio/",
+
+  "GOLAM_TRANSCRIPTS_EMAIL" :    "<place your email here>"
 }

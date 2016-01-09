@@ -26,7 +26,7 @@ func main() {
 	var port, name, properties string
 	flag.StringVar(&port, "port", "8080", "ip port of the server, defaults to 8080")
 	flag.StringVar(&name, "name", "Answering Machine", "name of the service, defaults to Answering Machine")
-	flag.StringVar(&properties, "conf", "config.json", "answering machine configuration filename")
+	flag.StringVar(&properties, "conf", "config-tropofs.json", "answering machine configuration filename")
 	flag.BoolVar(&showVersion, "version", false, "display version")
 	flag.Parse()
 
@@ -36,11 +36,14 @@ func main() {
 	if properties != "" {
 		conf.Use(configure.NewJSONFromFile(properties))
 	}
-	welcome := conf.String("GOLAM_WELCOME", "Welcome, Leave a message after the bip.", "your welcome message")
+	welcome := conf.String("GOLAM_WELCOME_MESSAGE", "Welcome, Leave a message after the bip.", "your welcome message")
 	voiceCode := conf.String("GOLAM_VOICE", "Vanessa", "Machine's default message for Text To Speach")
 	checkerPhoneNumber := conf.String("GOLAM_CHECKER_NUMBER", "", "the checker phone number to automate new messages check")
 	checkerName := conf.String("GOLAM_CHECKER_NAME", "", "to enhance the welcome message of the new messages checker")
 	recorderEndpoint := conf.String("GOLAM_RECORDER_ENDPOINT", "", "to receive the recordings")
+	recorderUsername := conf.String("GOLAM_RECORDER_USERNAME", "", "credentials to the recorder endpoint")
+	recorderPassword := conf.String("GOLAM_RECORDER_PASSWORD", "", "credentials to the recorder endpoint")
+	audioEndpoint := conf.String("GOLAM_AUDIO_ENDPOINT", "", "audio files server")
 	transcriptsEmail := conf.String("GOLAM_TRANSCRIPTS_EMAIL", "", "to receive transcripts via email")
 	conf.Parse()
 
@@ -56,6 +59,9 @@ func main() {
 	service := machine.NewAnsweringMachine(*welcome,
 		tropo.GetVoice(*voiceCode),
 		*recorderEndpoint,
+		*recorderUsername,
+		*recorderPassword,
+		*audioEndpoint,
 		*transcriptsEmail,
 		*checkerPhoneNumber,
 		*checkerName)

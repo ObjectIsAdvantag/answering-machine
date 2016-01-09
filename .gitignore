@@ -13,4 +13,4 @@ uploads/
 capture.db
 
 # sensitive data
-private.json
+*.private

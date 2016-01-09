@@ -24,6 +24,9 @@ type RecordCommand struct {
 	Name          string `json:"name,omitempty"`
 	Timeout       int `json:"timeout,omitempty"`
 	URL           string `json:"url,omitempty"`
+	Username      string `json:"username,omitempty"`
+	Password      string `json:"password,omitempty"`
+	Format        string `json:"format,omitempty"`
 	AsyncUpload   bool `json:"asyncUpload,omitempty"`
 	Transcription *RecordTranscription `json:"transcription,omitempty"`
 }

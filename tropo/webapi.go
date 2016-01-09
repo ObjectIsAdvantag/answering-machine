@@ -162,7 +162,7 @@ func (handler *CommunicationHandler) SendRawJSON(jsonString string) error {
 
 func (handler *CommunicationHandler) ReplyInternalError() {
 
-	glog.V(2).Infof("Starting\n")
+	glog.V(2).Infof("ReplyInternalError\n")
 
 	handler.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	handler.writer.WriteHeader(http.StatusInternalServerError)
@@ -172,7 +172,7 @@ func (handler *CommunicationHandler) ReplyInternalError() {
 
 func (handler *CommunicationHandler) ReplyBadInput() {
 
-	glog.V(2).Infof("Starting\n")
+	glog.V(2).Infof("ReplyBadInput\n")
 
 	handler.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	handler.writer.WriteHeader(http.StatusInternalServerError)
