@@ -5,36 +5,36 @@ A #GOLang Answering Machine backed by Cisco Tropo Communication Services
 
 # How to use it
 
-0. Download binaries from releases, see https://github.com/ObjectIsAdvantag/answering-machine/releases
-   - or git clone and build (make all)
-   
-1. Signup at http://tropo.com
+1. Download the answering machine binaries from [releases](https://github.com/ObjectIsAdvantag/answering-machine/releases)
+   - or git clone and build your own (make all)
+
+2. Signup at http://tropo.com
    - Note : Your login/password credentials will be used to authenticate against the Tropo REST API (provisonning) 
 
-2. Run provision.sh
-   - TROPO_USER
-   - TROPO_PASSWORD
-   - TROPO_COUNTRY_PREFIX       # Example : 1, 44, ... note that France, Germany need escaladation to Cisco teams
-   - GOLAM_ENDPOINT             # Example : http://mygolam.localtunnel.me 
-   - GOLAM_EMAIL_TRANSCRIPT     # Email where to send your messages
- 
-/!\ Write down your brand new Answering Machine phone number
-   
-3. Launch your answering machine
-   - WINDOWS > golam.exe -port 8080 -logtostderr=true -v=5
-   - Linux   > golam -port 8080 -logtostderr=true -v=5 
-   - DOCKER  # docker run -d -port 8080:8080 ObjectIsAdvantag/golam
+3. Register your app
+   - Either via the [POSTMAN collection](https://www.getpostman.com/collections/682f3c9f46d74e7ed85f) or via the provision script
+   - /!\ Write down your brand new Answering Machine phone number
+
+4. Update config.json with your personal data
+
 
 5. If your host is not visible on the internet, install localtunnel
-   > npm install -g localtunnel
-   > lt -p 8080 -d mygolam
 
-6. Call your answering machine and leave a message
+``` bash
+      > npm install -g localtunnel
+      > lt -p 8080 -d mygolam
+```
+
+6. Launch your answering machine (& the recorder if you choose not to register your recordings at tropo)
+   - WINDOWS > make run
+   - LINUX : TODO
+   - DOCKER: TODO
+
+
+7. Call your answering machine and leave a message
    - check your email
-   - browse through your messages
+   - call with the number specified as checker in config.json to check messages
 
-7. Optional : launch the messages recorder
-   - GOLAM_RECORDER
    
 
 # Roadmap
@@ -43,11 +43,11 @@ Check Releases and Milestones for more details
 
 FUTURE : see vNext Milestone
    
-IN PROGRESS: see v0.3 Milestone
+[v0.3 : IN PROGRESS](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3)
    [ ] installation guidelines 
    [ ] recordings persistance (BoltDB)
-   [ ] API to browse messages (date, duration, recording, transcript if available)
-   [X] Enhanced Tropo encapsulation (TropoVoice)
+   [X] upload and download recordings with Tropo or Go Recorder
+   [X] Enhance Tropo encapsulation (TropoVoice)
 
 v0.2: MVP with Cisco Tropo's communication backend (Call/Voice/Recording)
    - golang encapsulation of the Tropo Web API (Session, Record, Say)  
