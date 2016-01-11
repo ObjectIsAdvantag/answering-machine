@@ -1,6 +1,7 @@
 GOFLAGS = -tags netgo
 GITHUB_ACCOUNT = ObjectIsAdvantag
-CONFIG=config-recorder.json
+CONFIG=--env=env-recorder.private --messages=messages-fr.json
+
 
 default: dev
 
@@ -22,22 +23,26 @@ run-recorder: build-recorder
 .PHONY: run
 run:
 	rm -f messages.db
-	(./answering-machine.exe -port 8080 -logtostderr=true -v=5  --conf=$(CONFIG) &)
+	(./answering-machine.exe -port 8080 -logtostderr=true -v=5  $(CONFIG) &)
 	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
 	(lt -p 8080 -s answeringmachine &)
 	(lt -p 8081 -s recorder &)
 
 .PHONY: capture
 capture:
-	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 - --conf=$(CONFIG) &)
+	rm -f messages.db
+	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 $(CONFIG) &)
 	(../smartproxy/smartproxy.exe -capture -port 9090 -serve 127.0.0.1:8080 &)
 	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
 	(lt -p 9090 -s answeringmachine &)
 	(lt -p 8081 -s recorder &)
 
 .PHONY: dev
-dev: clean build
-	./answering-machine.exe -logtostderr=true -v=5 --conf=$(CONFIG)
+dev:
+	rm -f messages.db
+	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
+	./answering-machine.exe -port 8080 -logtostderr=true -v=5  $(CONFIG)
+
 
 .PHONY: build
 build: clean build-recorder

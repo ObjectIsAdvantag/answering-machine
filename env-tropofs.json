@@ -1,7 +1,4 @@
 {
-  "GOLAM_WELCOME_MESSAGE":       "Welcome, please leave a message after the beep",
-  "GOLAM_WELCOME_ALT_MESSAGE":   "Sorry we do not take any message currently, please call again later",
-
   "GOLAM_CHECKER_NAME" :         "<your name>",
   "GOLAM_CHECKER_NUMBER" :       "<place your phone number>",
 
@@ -9,7 +6,7 @@
   "GOLAM_RECORDER_USERNAME" :    "<place your tropo_account number>",
   "GOLAM_RECORDER_PASSWORD" :    "<place your tropo password here or in an env variable with same name",
 
-  "GOLAM_AUDIO_ENDPOINT" :       "http://hosting.tropo.com/<place your tropo account number here>/www/audio",
+  "GOLAM_AUDIO_ENDPOINT" :       "<place your tropo account number here>/www/audio",
 
   "GOLAM_TRANSCRIPTS_EMAIL" :    "<place your email here>"
 }

@@ -1,0 +1,10 @@
+{
+  "GOLAM_VOICE": "Aurelie",
+
+  "GOLAM_WELCOME": "Bienvenue ! Après le bip c'est à vous...",
+  "GOLAM_WELCOME_ALT" : "Désolé, nous ne pouvons pas prendre de message, rappelez plus tard...",
+  "GOLAM_CHECK_NO_MESSAGE" : "Bonjour %s, vous n'avez pas de nouveau message. Bonne journée !",
+  "GOLAM_CHECK_NEW_MESSAGES" : "Bonjour %s, vous avez %d nouveaux messages.",
+  "GOLAM_RECORDING_OK" : "Votre message est bien enregistré. Bonne journée !",
+  "GOLAM_RECORDING_FAILED" : "Désolé, nous n'avons pas pu enregistrer votre message. Merci de ré essayer !"
+}
