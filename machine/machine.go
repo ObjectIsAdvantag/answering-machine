@@ -177,9 +177,10 @@ func (app *AnsweringMachine) checkMessagesHandlerInternal(tropoHandler *tropo.Co
 	glog.V(3).Infof("checkMessagesHandlerInternal")
 
 	// check if new messages
-	nbOfNewMessages := 1
+	messages := app.db.FetchNewMessages()
+	nbOfNewMessages := len(messages)
 	if nbOfNewMessages == 0 {
-		msg := fmt.Sprintf("Bonjour %s, pas de nouveau message, bonne journée !", app.checkerFirstName)
+		msg := fmt.Sprintf("Bonjour %s, vous n'avez pas de nouveau message. Bonne journée !", app.checkerFirstName)
 		tropoHandler.Say(msg, app.defaultVoice)
 		return
 	}
@@ -188,11 +189,19 @@ func (app *AnsweringMachine) checkMessagesHandlerInternal(tropoHandler *tropo.Co
 	msg := fmt.Sprintf("Bonjour %s, vous avez %d nouveaux messages.", app.checkerFirstName, nbOfNewMessages)
 	compo.AddCommand(&tropo.SayCommand{Message:msg, Voice:app.defaultVoice})
 
+	// TODO: Say when the message was recorded
+
 	// play first message
-	audioFile := "8feadb25a73cac2122bab15ebff58788.wav"
+	firstMessage := messages[0]
+	audioFile := firstMessage.CallID + ".wav"
 	audioURI:= app.audioServerEndpoint + "/" + audioFile
-	//audio := fmt.Sprintf("ftp://%s:%s@ftp.tropo.com/recordings/e238bf666b523148830648743e8df485807310670638548414.wav", )
 	compo.AddCommand(&tropo.SayCommand{Message:audioURI})
+
+	// TODO: play next messages
+	//     - register event with messageID
+
+	//     - Mark latest message as read (place code below in the commands callback)
+	app.db.MarkMessageAsRead(firstMessage)
 
 	tropoHandler.ExecuteComposer(compo)
 }

@@ -32,7 +32,7 @@ type VoiceMessageStorage struct {
 type MachineProgress string
 const (
 	STARTED MachineProgress = "STARTED"
-	RECORDED MachineProgress = "RECORDER"
+	RECORDED MachineProgress = "RECORDED"
 	EMPTY MachineProgress = "EMPTY"
 	FAILED MachineProgress = "FAILED"
 )
@@ -136,24 +136,52 @@ func (storage *VoiceMessageStorage) Store(msg *VoiceMessage) error {
 	return nil
 }
 
-func (storage *VoiceMessageStorage) FetchNewVoiceMessages() [](*VoiceMessage) {
-	glog.V(2).Infof("Fetching all voice messages")
+func (storage *VoiceMessageStorage) MarkMessageAsRead(vm * VoiceMessage) error {
 
-	//TODO
+	vm.Status = CHECKED
+	vm.CheckedAt = time.Now()
+	err := storage.Store(vm)
 
-	return nil
+	return err
 }
+
+
+func (storage *VoiceMessageStorage) FetchNewMessages() [](*VoiceMessage) {
+	glog.V(2).Infof("Fetching new messages")
+
+	var messages [](*VoiceMessage) = make([](*VoiceMessage), 0, 10)
+	err := storage.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(BOLT_BUCKET))
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			glog.V(3).Infof("key=%s, value=%s\n", k, v)
+
+			var msg VoiceMessage
+			err := json.Unmarshal(v, &msg)
+			if err != nil {
+				glog.V(0).Infof("json decode failed for voice message with key %s\n", k)
+			} else {
+				if msg.Status == NEW {
+					messages = append(messages, &msg)
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		// Not a problem, we'll return the messages we were able to fetch
+	}
+
+	return messages
+}
+
 
 func (storage *VoiceMessageStorage) FetchAllVoiceMessages() [](*VoiceMessage) {
 	glog.V(2).Infof("Fetching all voice messages")
 
-	var total int
 	var messages [](*VoiceMessage) = make([](*VoiceMessage), 0, 10)
 	err := storage.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(BOLT_BUCKET))
-		total = b.Stats().KeyN
-		glog.V(3).Infof("Total of %d messages in bucket", total)
-
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			glog.V(3).Infof("key=%s, value=%s\n", k, v)
