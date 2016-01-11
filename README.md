@@ -42,12 +42,19 @@ A #GOLang Answering Machine backed by Cisco Tropo Communication Services
 Check Releases and Milestones for more details
 
 FUTURE : see vNext Milestone
-   
-[v0.3 : IN PROGRESS](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3)
-   [ ] installation guidelines 
-   [ ] recordings persistance (BoltDB)
-   [X] upload and download recordings with Tropo or Go Recorder
-   [X] Enhance Tropo encapsulation (TropoVoice)
+
+v0.4 : NOT STARTED
+   [ ] installation guidelines
+   [ ] add Docker support
+   [ ] internalize vocal messages
+   [ ] test on Linux
+
+[v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3) : RC1
+   [X] ability to check messages
+   [X] added Admin API to browse voice messages
+   [X] recordings persistance (BoltDB)
+   [X] upload and download recordings with Tropo or Standalone Recorder
+   [X] Enhanced Tropo encapsulation
 
 v0.2: MVP with Cisco Tropo's communication backend (Call/Voice/Recording)
    - golang encapsulation of the Tropo Web API (Session, Record, Say)  
