@@ -1,6 +1,6 @@
 GOFLAGS = -tags netgo
 GITHUB_ACCOUNT = ObjectIsAdvantag
-CONFIG=config.json
+CONFIG=config-standalone.private
 
 default: dev
 
@@ -21,6 +21,7 @@ run-recorder: build-recorder
 
 .PHONY: run
 run:
+	rm -f messages.db
 	(./answering-machine.exe -port 8080 -logtostderr=true -v=5  --conf=$(CONFIG) &)
 	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
 	(lt -p 8080 -s answeringmachine &)
@@ -39,7 +40,7 @@ dev: clean build
 	./answering-machine.exe -logtostderr=true -v=5 --conf=$(CONFIG)
 
 .PHONY: build
-build: clean
+build: clean build-recorder
 	go build $(GOFLAGS) answering-machine.go
 
 .PHONY: debug
@@ -62,11 +63,13 @@ docker: linux
 .PHONY: clean
 clean:
 	rm -f answering-machine answering-machine.exe answering-machine.zip answering-machine.debug
-	rm -f ./log/*
+	rm -f recorder-server recorder-server.exe recorder-server.zip recorder-server.debug
 
 .PHONY: erase
 erase:
-	rm -f data.db
+	rm -f *.db
+	rm -f ./log/*
+	rm -f ./uploads/*
 
 .PHONY: archive
 archive:

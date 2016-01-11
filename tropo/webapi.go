@@ -160,23 +160,21 @@ func (handler *CommunicationHandler) SendRawJSON(jsonString string) error {
 }
 
 
-func (handler *CommunicationHandler) ReplyInternalError() {
-
+func (handler *CommunicationHandler) ReplyInternalError(reason string, message string) {
 	glog.V(2).Infof("ReplyInternalError\n")
 
 	handler.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	handler.writer.WriteHeader(http.StatusInternalServerError)
-	fmt.Fprintf(handler.writer, `{ "error": { "status":"%d", "reason":"NOT_IMPLEMENTED", "message":"You hitted an endpoint that is not implemented yet, contact the author to speed up devs" } }`, http.StatusInternalServerError)
+	fmt.Fprintf(handler.writer, `{ "error": { "status":"%d", "reason":"%s", "message":"%s" } }`, http.StatusInternalServerError, reason, message)
 }
 
 
-func (handler *CommunicationHandler) ReplyBadInput() {
-
-	glog.V(2).Infof("ReplyBadInput\n")
+func (handler *CommunicationHandler) ReplyBadRequest(message string) {
+	glog.V(2).Infof("ReplyBadRequest\n")
 
 	handler.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
-	handler.writer.WriteHeader(http.StatusInternalServerError)
-	fmt.Fprintf(handler.writer, `{ "error": { "status":"%d", "reason":"NOT_IMPLEMENTED", "message":"You hitted an endpoint that is not implemented yet, contact the author to speed up devs" } }`, http.StatusInternalServerError)
+	handler.writer.WriteHeader(http.StatusBadRequest)
+	fmt.Fprintf(handler.writer, `{ "error": { "status":"%d", "reason":"BAD REQUEST", "message":"%s" } }`, http.StatusBadRequest, message)
 }
 
 

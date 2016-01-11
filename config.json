@@ -6,9 +6,9 @@
   "GOLAM_CHECKER_NUMBER" :       "<place your phone number>",
   "GOLAM_CKECKER_PIN" :          "",
 
-  "GOLAM_RECORDER_ENDPOINT" :    "https://recorder.localtunnel.me/recordings/",
+  "GOLAM_RECORDER_ENDPOINT" :    "https://recorder.localtunnel.me/recordings",
 
-  "GOLAM_AUDIO_ENDPOINT" :       "https://recorder.localtunnel.me/audio/",
+  "GOLAM_AUDIO_ENDPOINT" :       "https://recorder.localtunnel.me/audio",
 
   "GOLAM_TRANSCRIPTS_EMAIL" :    "<place your email here>"
 }

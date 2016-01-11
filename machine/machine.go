@@ -5,11 +5,11 @@ package machine
 
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/golang/glog"
 	"github.com/ObjectIsAdvantag/answering-machine/tropo"
-	"fmt"
 )
 
 
@@ -30,6 +30,7 @@ type AnsweringMachine struct {
 	checkerFirstName			string       		// for greeting purpose
 
 	db 							*VoiceMessageStorage
+	adminRoute					string
 }
 
 
@@ -60,6 +61,7 @@ func NewAnsweringMachine(welcomeMessage string, welcomeAltMessage string, welcom
 		checkerPhoneNumber,
 		checkerFirstName,
 		nil,
+		"/admin",
 	}
 
 	db, err := NewStorage("messages.db")
@@ -77,28 +79,40 @@ func NewAnsweringMachine(welcomeMessage string, welcomeAltMessage string, welcom
 
 
 func (app *AnsweringMachine) RegisterHandlers() {
-	http.HandleFunc(app.welcomeMessageRoute, app.welcomeHandler)
+	http.HandleFunc(app.welcomeMessageRoute, app.incomingCallHandler)
 	http.HandleFunc(app.successRoute, app.recordingSuccessHandler)
 	http.HandleFunc(app.incompleteRoute, app.recordingIncompleteHandler)
 	http.HandleFunc(app.communicationErrorRoute, app.recordingErrorHandler)
+
+	// Add admin API
+	if app.adminRoute != "" {
+		CreateAdminWebAPI(app.db, app.adminRoute)
+		glog.V(0).Infof("Admin API registered, browse message at URL http://.../admin ")
+	}
 }
 
-func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Request) {
+func (app *AnsweringMachine) incomingCallHandler(w http.ResponseWriter, req *http.Request) {
 	glog.V(2).Infof("Incoming call")
 
 	tropoHandler := tropo.NewHandler(w, req)
+	if req.Method != "POST" {
+		glog.V(0).Infof("POST expected, not a %s", req.Method)
+		tropoHandler.ReplyBadRequest("Expecting a POST, please check tropo documentation")
+		return
+	}
+
 	var session *tropo.Session
 	var err error
     if session, err = tropoHandler.DecodeSession(); err != nil {
-		glog.V(1).Infof("Cannot process incoming payload\n")
-		tropoHandler.ReplyInternalError()
+		glog.V(1).Infof("Cannot process incoming payload")
+		tropoHandler.ReplyInternalError("DECODE FAILED", "Cannot process incoming payload")
 		return
 	}
 
 	// check a human issued the call
 	if !(session.IsHumanInitiated() && session.IsCall()) {
-		glog.V(1).Infof("Unsupported request, a voice call is expected\n")
-		tropoHandler.ReplyBadInput()
+		glog.V(1).Infof("Unsupported request, a voice call is expected")
+		tropoHandler.ReplyBadRequest("An incoming voice session is expected, not a M2M dialog")
 		return
 	}
 	glog.V(0).Infof(`SessionID "%s", CallID "%s", From "+%s"`, session.ID, session.CallID, session.From.ID)
@@ -114,6 +128,8 @@ func (app *AnsweringMachine) welcomeHandler(w http.ResponseWriter, req *http.Req
 
 
 func (app *AnsweringMachine) welcomeHandlerInternal(tropoHandler *tropo.CommunicationHandler, session *tropo.Session,w http.ResponseWriter, req *http.Request) {
+	glog.V(3).Infof("welcomeHandlerInternal")
+
 	// if no database to record message, say alternate welcome message
 	if app.db == nil {
 		tropoHandler.Say(app.welcomeAltMessage, app.defaultVoice)
@@ -158,6 +174,8 @@ func (app *AnsweringMachine) welcomeHandlerInternal(tropoHandler *tropo.Communic
 
 
 func (app *AnsweringMachine) checkMessagesHandlerInternal(tropoHandler *tropo.CommunicationHandler, session *tropo.Session,w http.ResponseWriter, req *http.Request) {
+	glog.V(3).Infof("checkMessagesHandlerInternal")
+
 	// check if new messages
 	nbOfNewMessages := 1
 	if nbOfNewMessages == 0 {
@@ -184,17 +202,40 @@ func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req 
 	glog.V(2).Infof("Recording response")
 
 	tropoHandler := tropo.NewHandler(w, req)
-
 	var answer *tropo.RecordingResult
 	var err error
 	if answer, err = tropoHandler.DecodeRecordingAnswer(); err != nil {
-		glog.V(1).Infof("Cannot process recording result\n")
-		tropoHandler.ReplyInternalError()
+		glog.V(1).Infof("Cannot process recording result")
+		tropoHandler.ReplyInternalError("DECODING ERROR", "Cannot process recording result")
 		return
 	}
 
 	glog.V(0).Infof(`SessionID "%s", CallID "%s"`, answer.SessionID, answer.CallID)
 	glog.V(2).Infof("Recording result details: %s\n", answer)
+
+	// Store the recording success
+	var vm *VoiceMessage
+	vm, err = app.db.GetVoiceMessageForCallID(answer.CallID)
+	if err != nil {
+		glog.V(2).Infof("Cannot find message with callID: %s", answer.CallID)
+		// TODO Analyse how often this case would happen, by default we'll fail but alternatively we could not create a brand new message
+
+		tropoHandler.Say("Désolé, nous n'avons pas pu enregistrer votre message. Merci de ré essayer !", tropo.VOICE_AUDREY)
+		return
+	}
+
+	vm.Progress = RECORDED
+	vm.Recording = answer.Actions.URL
+	vm.Duration = answer.Actions.Duration
+	vm.Status = NEW
+	if err := app.db.Store(vm); err != nil {
+		glog.V(2).Infof("Cannot update message with callID: %s", answer.CallID)
+		// TODO Analyse how often this case would happen, we should at a minimum update the message state to FAILED
+
+		// say alternate welcome message
+		tropoHandler.Say("Désolé, nous n'avons pas pu enregistrer votre message. Merci de ré essayer !", tropo.VOICE_AUDREY)
+		return
+	}
 
 	// say good bye
 	tropoHandler.Say("Votre message est bien enregistré. Bonne journée !", tropo.VOICE_AUDREY)

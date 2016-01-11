@@ -1,6 +1,9 @@
 // Copyright 2015, Stève Sfartz
 // Licensed under the MIT License
 
+// Utility to persist messages among calls
+// Note : recordings are stored to Recorder Server or Tropo File Storage, a pointer to the recording audio file is stored with each voice message entry
+//
 package machine
 
 import (
@@ -26,19 +29,20 @@ type VoiceMessageStorage struct {
 	db 			*bolt.DB 		// database
 }
 
-type MachineProgress int
+type MachineProgress string
 const (
-	STARTED MachineProgress = iota
-	RECORDED
-	EMPTY
-	FAILED
+	STARTED MachineProgress = "STARTED"
+	RECORDED MachineProgress = "RECORDER"
+	EMPTY MachineProgress = "EMPTY"
+	FAILED MachineProgress = "FAILED"
 )
 
-type CheckedStatus int
+type CheckedStatus string
 const (
-	NEW CheckedStatus = iota
-	CHECKED
-	DELETED
+	NEW CheckedStatus = "NEW"
+	CHECKED CheckedStatus = "CHECKED"
+	DELETED CheckedStatus = "DELETED"
+	UNDEFINED CheckedStatus = "UNDEFINED"
 )
 
 type VoiceMessage struct {
@@ -49,7 +53,7 @@ type VoiceMessage struct {
 	Recording   	string // URL of the audio recording
 	Duration		int // number of seconds
 	Transcript  	string // transcript contents if successful
-	Status      	*CheckedStatus // enum of NEW, CHECKED, DELETED
+	Status      	CheckedStatus // enum of NEW, CHECKED, DELETED, UNDEFINED
 	CheckedAt		time.Time
 }
 
@@ -100,7 +104,7 @@ func (storage *VoiceMessageStorage) CreateVoiceMessage(callID string, callerNumb
 		Recording: 		"",
 		Duration:		0,
 		Transcript:  	"",
-		Status:      	nil,
+		Status:      	UNDEFINED,
 		CheckedAt:		time.Time{},
 	}
 }
@@ -132,12 +136,12 @@ func (storage *VoiceMessageStorage) Store(msg *VoiceMessage) error {
 	return nil
 }
 
-func (storage *VoiceMessageStorage) FetchNewVoiceMessages() ([](*VoiceMessage), int) {
+func (storage *VoiceMessageStorage) FetchNewVoiceMessages() [](*VoiceMessage) {
 	glog.V(2).Infof("Fetching all voice messages")
 
 	//TODO
 
-	return nil, 1
+	return nil
 }
 
 func (storage *VoiceMessageStorage) FetchAllVoiceMessages() [](*VoiceMessage) {
@@ -172,7 +176,7 @@ func (storage *VoiceMessageStorage) FetchAllVoiceMessages() [](*VoiceMessage) {
 }
 
 
-func (storage *VoiceMessageStorage) GetVoiceMessageForCallID(callID string) *VoiceMessage {
+func (storage *VoiceMessageStorage) GetVoiceMessageForCallID(callID string) (*VoiceMessage, error) {
 	glog.V(2).Infof("Retreiving voice message for callID: %s\n", callID)
 
 	var msg VoiceMessage
@@ -195,10 +199,10 @@ func (storage *VoiceMessageStorage) GetVoiceMessageForCallID(callID string) *Voi
 	})
 	if err != nil {
 		glog.V(2).Infof("Retreiving voice message for callID: %s\n", callID)
-		return nil
+		return nil, err
 	}
 
-	return &msg
+	return &msg, nil
 }
 
 
