@@ -44,12 +44,12 @@ Check Releases and Milestones for more details
 FUTURE : see vNext Milestone
 
 v0.4 : NOT STARTED
-   [ ] installation guidelines
-   [ ] add Docker support
-   [ ] internalize vocal messages
-   [ ] test on Linux
+   - [ ] installation guidelines
+   - [ ] add Docker support
+   - [ ] internalize vocal messages
+   - [ ] test on Linux
 
-[v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3) : Full MVP
+[v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3): Full MVP
    - welcome message, record, check messages
    - on-disk recordings storage (BoltDB)
    - admin API to browse voice messages
