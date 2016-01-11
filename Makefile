@@ -1,6 +1,6 @@
 GOFLAGS = -tags netgo
 GITHUB_ACCOUNT = ObjectIsAdvantag
-CONFIG=config-standalone.private
+CONFIG=config-recorder.json
 
 default: dev
 
@@ -51,10 +51,12 @@ debug:
 .PHONY: linux
 linux:
 	GOOS=linux GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
+	GOOS=linux GOARCH=amd64 go build $(GOFLAGS) recorder-server.go
 
 .PHONY: windows
 windows:
 	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
+	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) recorder-server.go
 
 .PHONY: docker
 docker: linux

@@ -49,14 +49,14 @@ v0.4 : NOT STARTED
    [ ] internalize vocal messages
    [ ] test on Linux
 
-[v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3) : RC1
-   [X] ability to check messages
-   [X] added Admin API to browse voice messages
-   [X] recordings persistance (BoltDB)
-   [X] upload and download recordings with Tropo or Standalone Recorder
-   [X] Enhanced Tropo encapsulation
-
-v0.2: MVP with Cisco Tropo's communication backend (Call/Voice/Recording)
+[v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3) : Full MVP
+   - welcome message, record, check messages
+   - on-disk recordings storage (BoltDB)
+   - admin API to browse voice messages
+   - upload and download of recordings via Tropo File Storage or Standalone Recorder/AudioServer (sse Recorder)
+   - enhanced Tropo WebAPI golang client
+    
+v0.2: MVP with Cisco Tropo's communication backend (Say/Record)
    - golang encapsulation of the Tropo Web API (Session, Record, Say)  
    - provisioning env (registration, phone number) via Tropo REST API (see postman collection)
    - local tests via localtunnel 
