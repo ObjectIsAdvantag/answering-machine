@@ -10,7 +10,7 @@ answering-machine
 # runtime artefacts
 log/
 uploads/
-capture.db
+*.db
 
 # sensitive data
 *.private

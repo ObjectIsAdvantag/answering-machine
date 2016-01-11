@@ -37,6 +37,7 @@ func main() {
 		conf.Use(configure.NewJSONFromFile(properties))
 	}
 	welcome := conf.String("GOLAM_WELCOME_MESSAGE", "Welcome, Leave a message after the bip.", "your welcome message")
+	welcomeAlt := conf.String("GOLAM_WELCOME_ALT_MESSAGE", "Sorry we do not take any message currently, please call again later", "the alt welcome message when recording is not active")
 	voiceCode := conf.String("GOLAM_VOICE", "Vanessa", "Machine's default message for Text To Speach")
 	checkerPhoneNumber := conf.String("GOLAM_CHECKER_NUMBER", "", "the checker phone number to automate new messages check")
 	checkerName := conf.String("GOLAM_CHECKER_NAME", "", "to enhance the welcome message of the new messages checker")
@@ -56,7 +57,9 @@ func main() {
 		glog.Errorf("Invalid port: %s (%s)\n", port, err)
 	}
 
-	service := machine.NewAnsweringMachine(*welcome,
+	service := machine.NewAnsweringMachine(
+		*welcome,
+		*welcomeAlt,
 		tropo.GetVoice(*voiceCode),
 		*recorderEndpoint,
 		*recorderUsername,

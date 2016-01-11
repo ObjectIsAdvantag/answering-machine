@@ -2,7 +2,8 @@
 // Licensed under the MIT License
 
 //
-// Utility Server to upload Tropo Recordings and servce Audio Files
+// Utility service to upload Tropo Recordings and serve Audio Files
+// as an alternative to Trop File Storage
 //
 package recorder
 
