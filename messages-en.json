@@ -1,0 +1,10 @@
+{
+  "VOICE": "Vanessa",
+
+  "WELCOME": "Welcome, please leave a message after the beep",
+  "WELCOME_ALT" : "Sorry we do not take any message currently, please call again later",
+  "CHECK_NO_MESSAGE" : "Hello %s, no new messages. Have a good day !",
+  "CHECK_NEW_MESSAGES" : "Hello %s, you have %d new messages",
+  "RECORDING_OK" : "We got your message recorded. Have a great day !",
+  "RECORDING_FAILED" : "Sorry, we could not record your message. Please try again later"
+}

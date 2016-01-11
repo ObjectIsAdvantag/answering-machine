@@ -1,0 +1,10 @@
+{
+  "VOICE": "Aurelie",
+
+  "WELCOME": "Bienvenue ! Après le bip c'est à vous...",
+  "WELCOME_ALT" : "Désolé, nous ne pouvons pas prendre de message, rappelez plus tard...",
+  "CHECK_NO_MESSAGE" : "Bonjour %s, vous n'avez pas de nouveau message. Bonne journée !",
+  "CHECK_NEW_MESSAGES" : "Bonjour %s, vous avez %d nouveaux messages.",
+  "RECORDING_OK" : "Votre message est bien enregistré. Bonne journée !",
+  "RECORDING_FAILED" : "Désolé, nous n'avons pas pu enregistrer votre message. Merci de ré essayer !"
+}
