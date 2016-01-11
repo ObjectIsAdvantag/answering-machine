@@ -43,10 +43,11 @@ Check Releases and Milestones for more details
 
 FUTURE : see vNext Milestone
 
-v0.4 : NOT STARTED
+[v0.4](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.4) : in progress
+   [x] i18n messages
+   [x] distinct messages & env conf
    [ ] installation guidelines
    [ ] add Docker support
-   [ ] internalize vocal messages
    [ ] test on Linux
 
 [v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3) : Full MVP

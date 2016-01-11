@@ -1,7 +1,2 @@
-{
-  "GOLAM_CHECKER_NAME" :         "<your name>",
-  "GOLAM_CHECKER_NUMBER" :       "<place your phone number>",
-  "GOLAM_RECORDER_ENDPOINT" :    "https://recorder.localtunnel.me/recordings",
-  "GOLAM_AUDIO_ENDPOINT" :       "https://recorder.localtunnel.me/audio",
-  "GOLAM_TRANSCRIPTS_EMAIL" :    "<place your email here>"
+
 }

@@ -14,33 +14,32 @@ import (
 )
 
 type I18nMessages struct {
-	defaultVoice				*tropo.Voice 		// see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
-	welcomeMessage				string     			// message played at incoming calls
-	welcomeAltMessage			string     			// message played at incoming calls when recording is not active
-	checkNoMessage				string
-	checkNewMessages			string
-	recordingOKMessage			string
-	recordingFailedMessage		string
+	DefaultVoice				*tropo.Voice 		// see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
+	WelcomeMessage				string     			// message played at incoming calls
+	WelcomeAltMessage			string     			// message played at incoming calls when recording is not active
+	CheckNoMessage				string
+	CheckNewMessages			string
+	RecordingOKMessage			string
+	RecordingFailedMessage		string
 }
 
 type EnvConfiguration struct {
-	recorderEndpoint			string       		// URI to record the messages
-	recorderUsername			string
-	recorderPassword			string
-	audioServerEndpoint			string
-	transcriptsReceiver			string  			// email of the transcriptions receiver
-	checkerPhoneNumber			string    		 	// phone number to check messages
-	checkerFirstName			string       		// for greeting purpose
-	dbFilename					string
+	RecorderEndpoint			string       		// URI to record the messages
+	RecorderUsername			string
+	RecorderPassword			string
+	AudioServerEndpoint			string
+	TranscriptsReceiver			string  			// email of the transcriptions receiver
+	CheckerPhoneNumber			string    		 	// phone number to check messages
+	CheckerFirstName			string       		// for greeting purpose
+	DBfilename					string
 }
 
 type HandlerRoutes struct {
-
-	welcomeMessageRoute			string    			// route to the welcome message
-	recordingSuccessRoute		string       		// invoked after message are recorded
-	recordingIncompleteRoute	string   	 		// invoked if a timeout occurs
-	recordingFailedRoute		string    			// invoked if the recording failed due to communication issues between Tropo and the AnsweringMachine
-	adminRoute					string				// webapi to browse voice messages
+	WelcomeMessageRoute			string    			// route to the welcome message
+	RecordingSuccessRoute		string       		// invoked after message are recorded
+	RecordingIncompleteRoute	string   	 		// invoked if a timeout occurs
+	RecordingFailedRoute		string    			// invoked if the recording failed due to communication issues between Tropo and the AnsweringMachine
+	AdminRoute					string				// webapi to browse voice messages
 }
 
 type AnsweringMachine struct {
@@ -51,9 +50,9 @@ type AnsweringMachine struct {
 }
 
 
-func NewAnsweringMachine(env *EnvConfiguration, routes *HandlerRoutes, messages *I18nMessages) *AnsweringMachine {
+func NewAnsweringMachine(env *EnvConfiguration, messages *I18nMessages) *AnsweringMachine {
 
-	db, err := NewStorage(env.dbFilename)
+	db, err := NewStorage(env.DBfilename)
 	if err != nil {
 		// TODO switch to ALT mode : say welcome message but do not record
 		glog.Fatalf("Coud not create database to store messages states, error: %s", err)
@@ -61,6 +60,7 @@ func NewAnsweringMachine(env *EnvConfiguration, routes *HandlerRoutes, messages 
 		return nil
 	}
 
+	routes := &HandlerRoutes{ "/", "/success", "/incomplete", "/failed", "/admin" }
 	app := AnsweringMachine{routes, messages, env, db}
 
 	glog.V(2).Infof("Created new AnsweringMachine with configuration %s", app)
@@ -70,14 +70,14 @@ func NewAnsweringMachine(env *EnvConfiguration, routes *HandlerRoutes, messages 
 
 
 func (app *AnsweringMachine) RegisterHandlers() {
-	http.HandleFunc(app.routes.welcomeMessageRoute, app.incomingCallHandler)
-	http.HandleFunc(app.routes.recordingSuccessRoute, app.recordingSuccessHandler)
-	http.HandleFunc(app.routes.recordingIncompleteRoute, app.recordingIncompleteHandler)
-	http.HandleFunc(app.routes.recordingFailedRoute, app.recordingErrorHandler)
+	http.HandleFunc(app.routes.WelcomeMessageRoute, app.incomingCallHandler)
+	http.HandleFunc(app.routes.RecordingSuccessRoute, app.recordingSuccessHandler)
+	http.HandleFunc(app.routes.RecordingIncompleteRoute, app.recordingIncompleteHandler)
+	http.HandleFunc(app.routes.RecordingFailedRoute, app.recordingErrorHandler)
 
 	// Add admin API
-	if app.routes.adminRoute != "" {
-		CreateAdminWebAPI(app.db, app.routes.adminRoute)
+	if app.routes.AdminRoute != "" {
+		CreateAdminWebAPI(app.db, app.routes.AdminRoute)
 		glog.V(0).Infof("Admin API registered, browse message at URL http://.../admin ")
 	}
 }
@@ -109,7 +109,7 @@ func (app *AnsweringMachine) incomingCallHandler(w http.ResponseWriter, req *htt
 	glog.V(0).Infof(`SessionID "%s", CallID "%s", From "+%s"`, session.ID, session.CallID, session.From.ID)
 
 	// redirect to check messages if the answering machine registered checker is calling
-	if session.From.ID == app.env.checkerPhoneNumber {
+	if session.From.ID == app.env.CheckerPhoneNumber {
 		app.checkMessagesHandlerInternal(tropoHandler, session, w, req)
 		return
 	}
@@ -123,7 +123,7 @@ func (app *AnsweringMachine) welcomeHandlerInternal(tropoHandler *tropo.Communic
 
 	// if no database to record message, say alternate welcome message
 	if app.db == nil {
-		tropoHandler.Say(app.messages.welcomeAltMessage, app.messages.defaultVoice)
+		tropoHandler.Say(app.messages.WelcomeAltMessage, app.messages.DefaultVoice)
 		return
 	}
 
@@ -131,17 +131,17 @@ func (app *AnsweringMachine) welcomeHandlerInternal(tropoHandler *tropo.Communic
 	voiceMessage := app.db.CreateVoiceMessage(session.CallID, "+" + session.From.ID)
 	if err := app.db.Store(voiceMessage); err != nil {
 		// say alternate welcome message
-		tropoHandler.Say(app.messages.welcomeAltMessage, app.messages.defaultVoice)
+		tropoHandler.Say(app.messages.WelcomeAltMessage, app.messages.DefaultVoice)
 		return
 	}
 
 	// please leave a message, start recording
 	compo := tropoHandler.NewComposer()
-	compo.AddCommand(&tropo.SayCommand{Message:app.messages.welcomeMessage, Voice:app.messages.defaultVoice})
+	compo.AddCommand(&tropo.SayCommand{Message:app.messages.WelcomeMessage, Voice:app.messages.DefaultVoice})
 
 	choices := tropo.RecordChoices{Terminator:"#"}
-	transcript := tropo.RecordTranscription{ID:session.CallID, URL:app.env.transcriptsReceiver}
-    recorderURL := app.env.recorderEndpoint + "/" + session.CallID + ".wav"
+	transcript := tropo.RecordTranscription{ID:session.CallID, URL:app.env.TranscriptsReceiver}
+    recorderURL := app.env.RecorderEndpoint + "/" + session.CallID + ".wav"
 	compo.AddCommand(&tropo.RecordCommand{
 		Bargein:true,
 		Attempts:3,
@@ -152,13 +152,13 @@ func (app *AnsweringMachine) welcomeHandlerInternal(tropoHandler *tropo.Communic
 		MaxTime:60,
 		Name:"recording",
 		URL:recorderURL,
-		Username:app.env.recorderUsername,
-		Password:app.env.recorderPassword,
+		Username:app.env.RecorderUsername,
+		Password:app.env.RecorderPassword,
 		AsyncUpload:true,
 		Transcription:&transcript})
-	compo.AddCommand(&tropo.OnCommand{Event:"continue", Next:"/answer", Required:true})
-	compo.AddCommand(&tropo.OnCommand{Event:"incomplete", Next:"/timeout", Required:true})
-	compo.AddCommand(&tropo.OnCommand{Event:"error", Next:"/error", Required:true})
+	compo.AddCommand(&tropo.OnCommand{Event:"continue", Next:app.routes.RecordingSuccessRoute, Required:true})
+	compo.AddCommand(&tropo.OnCommand{Event:"incomplete", Next:app.routes.RecordingIncompleteRoute, Required:true})
+	compo.AddCommand(&tropo.OnCommand{Event:"error", Next:app.routes.RecordingFailedRoute, Required:true})
 
 	tropoHandler.ExecuteComposer(compo)
 }
@@ -171,21 +171,21 @@ func (app *AnsweringMachine) checkMessagesHandlerInternal(tropoHandler *tropo.Co
 	messages := app.db.FetchNewMessages()
 	nbOfNewMessages := len(messages)
 	if nbOfNewMessages == 0 {
-		msg := fmt.Sprintf(app.messages.checkNoMessage, app.env.checkerFirstName)
-		tropoHandler.Say(msg, app.messages.defaultVoice)
+		msg := fmt.Sprintf(app.messages.CheckNoMessage, app.env.CheckerFirstName)
+		tropoHandler.Say(msg, app.messages.DefaultVoice)
 		return
 	}
 
 	compo := tropoHandler.NewComposer()
-	msg := fmt.Sprintf(app.messages.checkNewMessages, app.env.checkerFirstName, nbOfNewMessages)
-	compo.AddCommand(&tropo.SayCommand{Message:msg, Voice:app.messages.defaultVoice})
+	msg := fmt.Sprintf(app.messages.CheckNewMessages, app.env.CheckerFirstName, nbOfNewMessages)
+	compo.AddCommand(&tropo.SayCommand{Message:msg, Voice:app.messages.DefaultVoice})
 
 	// TODO: Say when the message was recorded
 
 	// play first message
 	firstMessage := messages[0]
 	audioFile := firstMessage.CallID + ".wav"
-	audioURI:= app.env.audioServerEndpoint + "/" + audioFile
+	audioURI:= app.env.AudioServerEndpoint + "/" + audioFile
 	compo.AddCommand(&tropo.SayCommand{Message:audioURI})
 
 	// TODO: play next messages
@@ -220,7 +220,7 @@ func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req 
 		glog.V(2).Infof("Cannot find message with callID: %s", answer.CallID)
 		// TODO Analyse how often this case would happen, by default we'll fail but alternatively we could not create a brand new message
 
-		tropoHandler.Say("Désolé, nous n'avons pas pu enregistrer votre message. Merci de ré essayer !", app.messages.defaultVoice)
+		tropoHandler.Say(app.messages.RecordingFailedMessage, app.messages.DefaultVoice)
 		return
 	}
 
@@ -233,24 +233,24 @@ func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req 
 		// TODO Analyse how often this case would happen, we should at a minimum update the message state to FAILED
 
 		// say alternate welcome message
-		tropoHandler.Say(app.messages.recordingFailedMessage, app.messages.defaultVoice)
+		tropoHandler.Say(app.messages.RecordingFailedMessage, app.messages.DefaultVoice)
 		return
 	}
 
 	// say good bye
-	tropoHandler.Say(app.messages.recordingOKMessage, app.messages.defaultVoice)
+	tropoHandler.Say(app.messages.RecordingOKMessage, app.messages.DefaultVoice)
 }
 
 func (app *AnsweringMachine) recordingIncompleteHandler(w http.ResponseWriter, req *http.Request) {
 	glog.V(2).Infof("RecordingIncompleteHandler")
 	tropoHandler := tropo.NewHandler(w, req)
-	tropoHandler.Say(app.messages.recordingFailedMessage, app.messages.defaultVoice)
+	tropoHandler.Say(app.messages.RecordingFailedMessage, app.messages.DefaultVoice)
 }
 
 func (app *AnsweringMachine) recordingErrorHandler(w http.ResponseWriter, req *http.Request) {
 	glog.V(2).Infof("RecordingErrordHandler")
 	tropoHandler := tropo.NewHandler(w, req)
-	tropoHandler.Say(app.messages.recordingFailedMessage, app.messages.defaultVoice)
+	tropoHandler.Say(app.messages.RecordingFailedMessage, app.messages.DefaultVoice)
 }
 
 
