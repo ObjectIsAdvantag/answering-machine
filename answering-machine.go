@@ -26,7 +26,7 @@ func main() {
 	var port, name, envConfig, messagesConfig string
 	flag.StringVar(&port, "port", "8080", "ip port of the server, defaults to 8080")
 	flag.StringVar(&name, "name", "Answering Machine", "name of the service, defaults to Answering Machine")
-	flag.StringVar(&envConfig, "env", "env.json", "environment configuration file, defaults to env.json, can be overloaded by env variables")
+	flag.StringVar(&envConfig, "env", "env.json", "environment configuration file")
 	flag.StringVar(&messagesConfig, "messages", "messages-en.json", "defaults messages, defaults to messages-en.json")
 	flag.BoolVar(&showVersion, "version", false, "display version")
 	flag.Parse()
@@ -62,14 +62,29 @@ func main() {
 func readConfiguration(envProperties string, messagesProperties string) (*machine.EnvConfiguration, *machine.I18nMessages) {
 
 	conf := configure.New()
+	glog.V(0).Infof("Loading configuration from 1. environnement")
 	conf.Use(configure.NewEnvironment())
 	if envProperties != "" {
-		conf.Use(configure.NewJSONFromFile(envProperties))
+		glog.V(0).Infof("Loading configuration from 2. json file: %s", envProperties)
+		if file, err := os.Open(envProperties); err != nil {
+			// TODO What if we wanted to pass all configuration via env variables, not possible as of today
+			glog.Fatalf("Could not open Environment configuration: %s", envProperties)
+		} else {
+			file.Close()
+			conf.Use(configure.NewJSONFromFile(envProperties))
+		}
 	}
 	if messagesProperties != "" {
-		conf.Use(configure.NewJSONFromFile(messagesProperties))
+		glog.V(0).Infof("Loading messages from: %s", messagesProperties)
+		if file, err := os.Open(messagesProperties); err != nil {
+			glog.Warningf("Could not open Messages definition, switching to default values", messagesProperties)
+		} else {
+			file.Close()
+			conf.Use(configure.NewJSONFromFile(messagesProperties))
+		}
 	}
 
+	// environment specifics
 	checkerPhoneNumber := conf.String("GOLAM_CHECKER_NUMBER", "", "the checker phone number to automate new messages check")
 	checkerName := conf.String("GOLAM_CHECKER_NAME", "", "to enhance the welcome message of the new messages checker")
 	recorderEndpoint := conf.String("GOLAM_RECORDER_ENDPOINT", "", "to receive the recordings")
@@ -77,7 +92,10 @@ func readConfiguration(envProperties string, messagesProperties string) (*machin
 	recorderPassword := conf.String("GOLAM_RECORDER_PASSWORD", "", "credentials to the recorder endpoint")
 	audioEndpoint := conf.String("GOLAM_AUDIO_ENDPOINT", "", "audio files server")
 	transcriptsEmail := conf.String("GOLAM_TRANSCRIPTS_EMAIL", "", "to receive transcripts via email")
+	dbFilename := conf.String("GOLAM_DATABASE_PATH", "messages.db", "path to the messages database")
+	dbResetAtStartup := conf.Bool("GOLAM_DATABASE_RESET", true, "flag to empty messages at startup")
 
+    // messages
 	defaultVoice := conf.String("GOLAM_VOICE", "Vanessa", "defaults to English")
 	welcome := conf.String("GOLAM_WELCOME", "Welcome, please leave a message after the beep", "to enhance the welcome message of the new messages checker")
 	welcomeAlt := conf.String("GOLAM_WELCOME_ALT", "Sorry we do not take any message currently, please call again later", "alternative message if storage service could not be started")
@@ -97,7 +115,8 @@ func readConfiguration(envProperties string, messagesProperties string) (*machin
 	env.TranscriptsReceiver= *transcriptsEmail
 	env.CheckerPhoneNumber= *checkerPhoneNumber
 	env.CheckerFirstName = *checkerName
-	env.DBfilename= "messages.db"
+	env.DBfilename= *dbFilename
+	env.DBresetAtStartup = *dbResetAtStartup
 
 	var messages machine.I18nMessages
 	messages.DefaultVoice = tropo.GetVoice(*defaultVoice)

@@ -32,6 +32,7 @@ type EnvConfiguration struct {
 	CheckerPhoneNumber			string    		 	// phone number to check messages
 	CheckerFirstName			string       		// for greeting purpose
 	DBfilename					string
+	DBresetAtStartup			bool
 }
 
 type HandlerRoutes struct {
@@ -52,7 +53,7 @@ type AnsweringMachine struct {
 
 func NewAnsweringMachine(env *EnvConfiguration, messages *I18nMessages) *AnsweringMachine {
 
-	db, err := NewStorage(env.DBfilename)
+	db, err := NewStorage(env.DBfilename, env.DBresetAtStartup)
 	if err != nil {
 		// TODO switch to ALT mode : say welcome message but do not record
 		glog.Fatalf("Coud not create database to store messages states, error: %s", err)

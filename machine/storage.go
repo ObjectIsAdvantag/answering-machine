@@ -14,6 +14,7 @@ import (
 
 	"github.com/golang/glog"
 	bolt "github.com/boltdb/bolt"
+	"fmt"
 )
 
 const (
@@ -57,26 +58,35 @@ type VoiceMessage struct {
 	CheckedAt		time.Time
 }
 
-
-func NewStorage(dbName string) (*VoiceMessageStorage, error) {
+// Returns a message database storage engine.
+// Messages are stored in specified file which is created if does not exists,
+// The database is erased if reset arg is set to true
+// An error is returned if the database cannot be opened
+func NewStorage(dbName string, reset bool) (*VoiceMessageStorage, error) {
 	// Open the datafile in current directory, creates the db if it doesn't pre-exist.
 	db, err := bolt.Open(dbName, 0600, nil)
 	if err != nil {
 		glog.Fatalf("Cannot create database: %s", dbName)
-		log.Fatal(err)
-		return nil, errors.New("Cannot create voice messages database")
+		return nil, fmt.Errorf("Cannot create messages database: %s", dbName)
 	}
 
-	// Let's create the bucket if does not pre-exists
+	// Delete the bucket if asked to
+	if reset {
+		glog.V(2).Infof("Resetting bucket %s", BOLT_BUCKET)
+		db.Update(func(tx *bolt.Tx) error {
+			return tx.DeleteBucket([]byte(BOLT_BUCKET))
+		})
+	}
+
+	// Create the bucket if does not pre-exists
 	err = db.Update(func(tx *bolt.Tx) error {
-		glog.V(2).Infof("Creating bucket %s\n", BOLT_BUCKET)
-		_, err := tx.CreateBucket([]byte(BOLT_BUCKET))
+		_, err := tx.CreateBucketIfNotExists([]byte(BOLT_BUCKET))
 		if err != nil {
 			glog.Infof("Cannot create bucket %s", BOLT_BUCKET)
 			return errors.New("Cannot create bucket: " + BOLT_BUCKET)
 		}
 
-		glog.V(0).Infof("Created bucket %s to persist voice messages", BOLT_BUCKET)
+		glog.V(0).Infof("Initialized bucket %s, in database %s to persist voice messages", BOLT_BUCKET, dbName)
 		return nil
 	})
 	if err != nil {

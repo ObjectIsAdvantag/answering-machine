@@ -1,7 +1,9 @@
 GOFLAGS = -tags netgo
 GITHUB_ACCOUNT = ObjectIsAdvantag
+DOCKER_ACCOUNT = objectisadvantag
 CONFIG=--env=env-recorder.private --messages=messages-fr.json
 
+./answering-machine.exe -port 8080 -logtostderr=true -v=5 --env=env.private  --messages=messages-fr.json
 
 default: dev
 
@@ -50,7 +52,7 @@ build: clean build-recorder
 
 .PHONY: debug
 debug:
-	godebug build $(GOFLAGS) -instrument github.com/$(GITHUB_ACCOUNT)/answering-machine/machine,github.com/$(GITHUB_ACCOUNT)/answering-machine/tropo answering-machine.go
+	godebug build $(GOFLAGS) -instrument github.com/$(GITHUB_ACCOUNT)/answering-machine/machine answering-machine.go
 	./answering-machine.debug -logtostderr=true -v=5
 
 .PHONY: linux
@@ -63,9 +65,23 @@ windows:
 	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
 	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) recorder-server.go
 
+.PHONY: dist
+dist: linux
+	rm -rf dist
+	mkdir dist
+	cp answering-machine dist/
+	cp recorder-server dist/
+	mkdir dist/logs
+	mkdir dist/uploads
+	mkdir dist/conf
+	cp messages-en.json dist/conf
+	cp messages-fr.json dist/conf
+	cp env-tropofs.private dist/env.json
+	cp Dockerfile dist/
+
 .PHONY: docker
-docker: linux
-	docker build -t $(GITHUB_ACCOUNT)/answering-machine .
+docker:
+	cd dist; docker build -t $(DOCKER_ACCOUNT)/answeringmachine .
 
 .PHONY: clean
 clean:
