@@ -47,6 +47,7 @@ func (api *AdminWebAPI) addAdminWebAPI(route string) {
 		for callID, msg := range messages {
 			if !first {
 				w.Write([]byte(","))
+			} else {
 				first = false
 			}
 			glog.V(3).Infof("CallID: %s, has message: %s", callID, msg)
