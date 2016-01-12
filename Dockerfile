@@ -7,6 +7,7 @@ COPY . /machine
 
 EXPOSE 8080 8081
 
-CMD ["/machine/answering-machine", "-port 8080", "--env=/machine/env.json", "--messages=/machine/conf/messages-fr.json", "-logtostderr=true", "-v=5"]
+ENTRYPOINT ["/machine/answering-machine", "-port", "8080", "--env=/machine/env.json", "--messages=/machine/conf/messages-fr.json", "-logtostderr=true", "-v=5"]
+
 
 

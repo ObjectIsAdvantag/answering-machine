@@ -18,7 +18,7 @@ import (
 )
 
 
-const version = "v0.3"
+const version = "v0.4.alpha"
 
 func main() {
 	// Read arguments (prevail)

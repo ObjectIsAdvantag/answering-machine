@@ -1,9 +1,8 @@
 GOFLAGS = -tags netgo
 GITHUB_ACCOUNT = ObjectIsAdvantag
 DOCKER_ACCOUNT = objectisadvantag
-CONFIG=--env=env-recorder.private --messages=messages-fr.json
-
-./answering-machine.exe -port 8080 -logtostderr=true -v=5 --env=env.private  --messages=messages-fr.json
+CONFIG=--env=env.private --messages=messages-fr.json
+STARTUP=./answering-machine.exe -port 8080 -logtostderr=true -v=5 $(CONFIG)
 
 default: dev
 
@@ -76,11 +75,11 @@ dist: linux
 	mkdir dist/conf
 	cp messages-en.json dist/conf
 	cp messages-fr.json dist/conf
-	cp env-tropofs.private dist/env.json
+	cp env-tropofs.json dist/env.json
 	cp Dockerfile dist/
 
 .PHONY: docker
-docker:
+docker: dist
 	cd dist; docker build -t $(DOCKER_ACCOUNT)/answeringmachine .
 
 .PHONY: clean
