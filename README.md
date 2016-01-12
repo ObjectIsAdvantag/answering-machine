@@ -41,15 +41,15 @@ A #GOLang Answering Machine backed by Cisco Tropo Communication Services
 
 Check Releases and Milestones for more details
 
-FUTURE : see vNext Milestone
+FUTURE : see milestones [vNext](https://github.com/ObjectIsAdvantag/answering-machine/milestones/vNext) and [Triage](https://github.com/ObjectIsAdvantag/answering-machine/milestones/Triage) for non priorized issues
 
 [v0.4](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.4) : in progress
    - [x] i18n messages
    - [x] distinct messages & env conf
-   - [ ] installation guidelines
-   - [ ] add Docker support
+   - [x] add Docker support
    - [ ] test on Linux
-
+   - [ ] installation guidelines (ie, tropo app provisionning)
+   
 [v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3): Full MVP
    - welcome message, record, check messages
    - on-disk recordings storage (BoltDB)
