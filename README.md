@@ -47,7 +47,7 @@ FUTURE : see milestones [vNext](https://github.com/ObjectIsAdvantag/answering-ma
    - [x] i18n messages
    - [x] distinct messages & env conf
    - [x] Docker support
-   - [ ] Configuration check
+   - [x] Configuration endpoint /conf
    - [ ] test on Linux
    - [ ] installation guidelines (ie, tropo app provisionning)
    
