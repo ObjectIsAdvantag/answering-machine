@@ -8,7 +8,7 @@ import (
 )
 
 func TestStorage_create (t *testing.T) {
-	_, err := NewStorage("messages.db")
+	_, err := NewStorage("tests.db", true)
 	if err != nil {
 		t.Failed()
 	}

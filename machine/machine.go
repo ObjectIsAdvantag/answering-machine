@@ -13,35 +13,6 @@ import (
 	"github.com/ObjectIsAdvantag/answering-machine/tropo"
 )
 
-type I18nMessages struct {
-	DefaultVoice				*tropo.Voice 		// see https://www.tropo.com/docs/webapi/international-features/speaking-multiple-languages
-	WelcomeMessage				string     			// message played at incoming calls
-	WelcomeAltMessage			string     			// message played at incoming calls when recording is not active
-	CheckNoMessage				string
-	CheckNewMessages			string
-	RecordingOKMessage			string
-	RecordingFailedMessage		string
-}
-
-type EnvConfiguration struct {
-	RecorderEndpoint			string       		// URI to record the messages
-	RecorderUsername			string
-	RecorderPassword			string
-	AudioServerEndpoint			string
-	TranscriptsReceiver			string  			// email of the transcriptions receiver
-	CheckerPhoneNumber			string    		 	// phone number to check messages
-	CheckerFirstName			string       		// for greeting purpose
-	DBfilename					string
-	DBresetAtStartup			bool
-}
-
-type HandlerRoutes struct {
-	WelcomeMessageRoute			string    			// route to the welcome message
-	RecordingSuccessRoute		string       		// invoked after message are recorded
-	RecordingIncompleteRoute	string   	 		// invoked if a timeout occurs
-	RecordingFailedRoute		string    			// invoked if the recording failed due to communication issues between Tropo and the AnsweringMachine
-	AdminRoute					string				// webapi to browse voice messages
-}
 
 type AnsweringMachine struct {
 	routes 						*HandlerRoutes
@@ -61,7 +32,7 @@ func NewAnsweringMachine(env *EnvConfiguration, messages *I18nMessages) *Answeri
 		return nil
 	}
 
-	routes := &HandlerRoutes{ "/", "/success", "/incomplete", "/failed", "/admin" }
+	routes := &HandlerRoutes{ "/", "/success", "/incomplete", "/failed", "/admin", "/conf" }
 	app := AnsweringMachine{routes, messages, env, db}
 
 	glog.V(2).Infof("Created new AnsweringMachine with configuration %s", app)
@@ -76,11 +47,18 @@ func (app *AnsweringMachine) RegisterHandlers() {
 	http.HandleFunc(app.routes.RecordingIncompleteRoute, app.recordingIncompleteHandler)
 	http.HandleFunc(app.routes.RecordingFailedRoute, app.recordingErrorHandler)
 
-	// Add admin API
+	// Add admin Endpoint
 	if app.routes.AdminRoute != "" {
-		CreateAdminWebAPI(app.db, app.routes.AdminRoute)
-		glog.V(0).Infof("Admin API registered at %s", app.routes.AdminRoute)
+		AddAdminEndpoint(app.db, app.routes.AdminRoute)
+		glog.V(0).Infof("Administration endpoint registered at %s", app.routes.AdminRoute)
 	}
+
+	// Add conf Endpoint
+	if app.routes.ConfigurationRoute != "" {
+		AddConfEndpoint(app, app.routes.ConfigurationRoute)
+		glog.V(0).Infof("Configuration endpoint registered at %s", app.routes.ConfigurationRoute)
+	}
+
 }
 
 func (app *AnsweringMachine) incomingCallHandler(w http.ResponseWriter, req *http.Request) {

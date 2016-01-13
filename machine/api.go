@@ -17,22 +17,22 @@ type AdminWebAPI struct {
 	route 		string
 }
 
-func CreateAdminWebAPI(store *VoiceMessageStorage, route string, ) (*AdminWebAPI, error) {
+func AddAdminEndpoint(store *VoiceMessageStorage, route string, ) (*AdminWebAPI, error) {
 	api := &AdminWebAPI { store, route }
-	api.addAdminWebAPI(route)
+	api.registerAdminWebAPI(route)
 	return api, nil
 }
 
 
 
-func (api *AdminWebAPI) addAdminWebAPI(route string) {
+func (api *AdminWebAPI) registerAdminWebAPI(route string) {
 
 	http.HandleFunc(route, func(w http.ResponseWriter, req *http.Request) {
 		glog.V(3).Infof("Admin API call: %s %s", req.Method, req.URL.String())
 
 		if req.Method != "GET" {
 			glog.V(2).Infof("Method %s not supported", req.Method)
-			api.sendBadRequest(w, "only GET requests are supported")
+			sendBadRequest(w, "only GET requests are supported")
 			return
 		}
 
@@ -41,7 +41,7 @@ func (api *AdminWebAPI) addAdminWebAPI(route string) {
 
 		w.Write([]byte("["))
 
-		// Add voice messages
+		// Display voice messages
 		messages := api.store.FetchAllVoiceMessages()
 		first := true
 		for callID, msg := range messages {
@@ -55,52 +55,9 @@ func (api *AdminWebAPI) addAdminWebAPI(route string) {
 			enc.Encode(msg)
 		}
 		w.Write([]byte("]"))
-
 	})
 }
 
-
-// Error structure ala google (see Vision API)
-type errorWrapper struct {
-	Error `json:"error"`
-}
-
-type Error struct {
-	Code int `json:"code"`
-	Status string `json:"status,omitempty"`
-	Message string `json:"message,omitempty"`
-	Details *[]errorDetails `json:"details,omitempty"`
-}
-
-type errorDetails struct {
-	Type string `json:"@type"`
-	Links []struct {
-		Description string `json:"description"`
-	} `json:"links"`
-}
-
-func (api *AdminWebAPI) sendBadRequest(w http.ResponseWriter, message string) {
-	api.sendError(w, http.StatusBadRequest, "BAD REQUEST", message)
-}
-
-func (api *AdminWebAPI) sendInternalError(w http.ResponseWriter, reason string, message string) {
-	api.sendError(w, http.StatusInternalServerError, reason, message)
-}
-
-func (api *AdminWebAPI) sendError(w http.ResponseWriter, code int, status string, message string) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(code)
-
-	error := Error{
-		Code: code,
-		Status: status,
-		Message: message,
-		Details: nil,
-	}
-	ew := errorWrapper{error}
-	enc := json.NewEncoder(w)
-	enc.Encode(ew)
-}
 
 
 
