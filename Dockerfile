@@ -1,5 +1,5 @@
-# Replace with scratch when done
-FROM gliderlabs/alpine:3.3
+# FROM gliderlabs/alpine:3.3
+FROM scratch
 
 MAINTAINER "Stève Sfartz" <steve.sfartz@gmail.com>
 

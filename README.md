@@ -14,66 +14,70 @@ A #GOLang Answering Machine backed by Cisco Tropo Communication Services
    - Fill the "Create new app" form with
       - name : Answering Machine (or whatever)
       - select Web (HTTP) API
-      - script : fill in your answering machine public endpoint, example : https://myansweringmachine.localtunnel.me/tropo
-      - Click create app
-   - On the next screen, you'll create a phone number
+      - script : fill in your answering machine public endpoint
+         - example : https://myansweringmachine.localtunnel.me/tropo
+      - Click "create app"
+   - On the next screen, we'll get a phone number
       - Choose a country in the list, and a region 
-      - Don't worry, you won't be billed, dev is free on tropo
+      - Note : don't worry, you won't be billed, dev is free on tropo
+      - Note : if your country is not listed, simply opt for a country to which you can initiate calls for free to test your answering machine (US and UK went out fine in my case)
       - /!\ Write down your brand new Answering Machine phone number
          
          
-3. Download an answering machine packages 
-   - Go to [releases](https://github.com/ObjectIsAdvantag/answering-machine/releases)
+3. Install your AnsweringMachine
+   - Download a Linux or Windows package from [releases](https://github.com/ObjectIsAdvantag/answering-machine/releases)
    
-   - Or use docker (see Docker hereafter)
-   - Or git clone and build your own answering machine (see Contribute hereafter)
+   - Or use docker (see Docker below)
+   - Or git clone and build your own answering machine (see Contribute below)
    
    
-4. Create an configuration with your personal data
+4. Configure your AnsweringMachine
    - Copy env-tropofs.json to env.json
    - Customize the entries
+   - Note that you should not prefix any phone number with + nor 00, simply start with your country code
 
 
 5. Launch your answering machine
 
-``` bash
-> ./answering-machine --port=8080 -logtostderr=true -v=5 --env=env-tropofs.json --messages=messages-fr.json
-```
+   ``` bash
+   > ./answering-machine --port=8080 -logtostderr=true -v=5 --env=env-tropofs.json --messages=messages-fr.json
+   ```
 
-You can check everything went well by calling a few endpoints in a Web browser or via curl
+   You can check everything went well by calling a few endpoints in a Web browser or via curl:
 
    - http://localhost:8080/ping
    - http://localhost:8080/conf
 
+   Note that it is possible to override configuration by setting environment variables
+   Ex : GOLAM_CHECKER_NAME=Stève, GOLAM_CHECKER_NUMBER=33678007835
+
 
 6. If your host is not visible on the internet, install localtunnel
 
-``` bash
-> npm install -g localtunnel
-> lt -p 8080 -s myansweringmachine
-your url is: https://myansweringmachine.localtunnel.me
-```
+   ``` bash
+   > npm install -g localtunnel
+   > lt -p 8080 -l 127.0.0.1 -s myansweringmachine
+   your url is: https://myansweringmachine.localtunnel.me
+   ```
 
-You can check everything went well by calling a few endpoints in a Web browser or via curl
+    You can check everything went well by calling a few endpoints in a Web browser or via curl
 
    - http://myansweringmachine.localtunnel.me/ping
    - http://myansweringmachine.localtunnel.me/conf
 
 
-7. Call your answering machine and leave a message
-   - dial in your answering machine phone number
+7. Call your AnsweringMachine and leave a message
+   - dial in your AnsweringMachine phone number
    - listen to your message
    - after the beep leave a message
    - check your email for a transcript 
    - call again with the number specified as checker in env.json to check your new message
    - visit http://myansweringmachine.localtunnel.me/messages to have a global view of your recorded messages (and their evolving states from NEW to CHECKED)
-  
+
 
 # Roadmap
 
-Check Releases and Milestones for more details
-
-FUTURE : see milestones [vNext](https://github.com/ObjectIsAdvantag/answering-machine/milestones/vNext) and [Triage](https://github.com/ObjectIsAdvantag/answering-machine/milestones/Triage) for non priorized issues
+Check [vNext](https://github.com/ObjectIsAdvantag/answering-machine/milestones/vNext) and [Triage](https://github.com/ObjectIsAdvantag/answering-machine/milestones/Triage) for non priorized issues.
 
 [v0.4](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.4) : Hosting & Packaging
    - i18n messages
