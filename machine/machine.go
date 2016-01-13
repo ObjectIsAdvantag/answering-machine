@@ -15,9 +15,9 @@ import (
 
 
 type AnsweringMachine struct {
-	routes 						*HandlerRoutes
-	messages 					*I18nMessages
 	env							*EnvConfiguration
+	messages 					*I18nMessages
+	routes 						*HandlerRoutes
 	db 							*VoiceMessageStorage
 }
 
@@ -32,8 +32,8 @@ func NewAnsweringMachine(env *EnvConfiguration, messages *I18nMessages) *Answeri
 		return nil
 	}
 
-	routes := &HandlerRoutes{ "/", "/success", "/incomplete", "/failed", "/admin", "/conf" }
-	app := AnsweringMachine{routes, messages, env, db}
+	routes := &HandlerRoutes{ "/tropo", "/tropo/recordingSuccess", "/tropo/recordingIncomplete", "/tropo/recordingFailed", "/admin", "/conf" }
+	app := AnsweringMachine{env, messages, routes, db}
 
 	glog.V(2).Infof("Created new AnsweringMachine with configuration %s", app)
 
@@ -42,7 +42,7 @@ func NewAnsweringMachine(env *EnvConfiguration, messages *I18nMessages) *Answeri
 
 
 func (app *AnsweringMachine) RegisterHandlers() {
-	http.HandleFunc(app.routes.WelcomeMessageRoute, app.incomingCallHandler)
+	http.HandleFunc(app.routes.IncomingCallRoute, app.incomingCallHandler)
 	http.HandleFunc(app.routes.RecordingSuccessRoute, app.recordingSuccessHandler)
 	http.HandleFunc(app.routes.RecordingIncompleteRoute, app.recordingIncompleteHandler)
 	http.HandleFunc(app.routes.RecordingFailedRoute, app.recordingErrorHandler)

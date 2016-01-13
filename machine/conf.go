@@ -36,7 +36,7 @@ type EnvConfiguration struct {
 }
 
 type HandlerRoutes struct {
-	WelcomeMessageRoute			string    			// route to the welcome message
+	IncomingCallRoute			string    			// route to the welcome message
 	RecordingSuccessRoute		string       		// invoked after message are recorded
 	RecordingIncompleteRoute	string   	 		// invoked if a timeout occurs
 	RecordingFailedRoute		string    			// invoked if the recording failed due to communication issues between Tropo and the AnsweringMachine

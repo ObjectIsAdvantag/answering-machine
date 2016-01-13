@@ -25,7 +25,7 @@ func main() {
 	var showVersion bool
 	var port, name, envConfig, messagesConfig string
 	flag.StringVar(&port, "port", "8080", "ip port of the server, defaults to 8080")
-	flag.StringVar(&name, "name", "Answering Machine", "name of the service, defaults to Answering Machine")
+	flag.StringVar(&name, "name", "AnsweringMachine", "name of the service, defaults to AnsweringMachine")
 	flag.StringVar(&envConfig, "env", "env.json", "environment configuration file")
 	flag.StringVar(&messagesConfig, "messages", "messages-en.json", "defaults messages, defaults to messages-en.json")
 	flag.BoolVar(&showVersion, "version", false, "display version")
@@ -35,7 +35,7 @@ func main() {
 	env, messages := readConfiguration(envConfig, messagesConfig)
 
 	if showVersion {
-		glog.Infof("SmartProxy version %s\n", version)
+		glog.Infof("%s version %s\n", name, version)
 		return
 	}
 
