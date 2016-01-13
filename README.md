@@ -3,7 +3,7 @@
 A #GOLang Answering Machine backed by Cisco Tropo Communication Services 
 
 
-# How to use it
+# Give it a try
 
 1. Signup at http://tropo.com
    - Note : Your login/password credentials can also be used to authenticate against the Tropo REST API (see provisonning) 
@@ -74,6 +74,25 @@ A #GOLang Answering Machine backed by Cisco Tropo Communication Services
    - call again with the number specified as checker in env.json to check your new message
    - visit http://myansweringmachine.localtunnel.me/messages to have a global view of your recorded messages (and their evolving states from NEW to CHECKED)
 
+     ``` bash
+    // https://answeringmachine.localtunnel.me/messages
+    [
+      {
+        "CallID": "e916188203beb99ae0c4677af17ea84e",
+        "CreatedAt": "2016-01-13T23:10:4567261876Z",
+        "CallerNumber": "+33954218763",
+        "Progress": "RECORDED",
+        "Recording": "ftp://ftp.tropo.com/www/audio/e916188203beb99ae0c4677af17ea84e.wav",
+        "Duration": 4400,
+        "Transcript": "",
+        "Status": "NEW",
+        "CheckedAt": "0001-01-01T00:00:00Z"
+      }
+    ]
+    ```
+ 
+
+
 
 # Roadmap
 
@@ -102,7 +121,29 @@ v0.1: back-end API structure
    - args, version, glog
    - healthcheck
    - error structure
-      
+
+# Docker
+ 
+TODO: Publish the answering machine image to docker
+
+You can build your own Docker image by cloning this repo, and running make docker
+
+``` bash
+> git clone https://github.com/ObjectIsAdvantag/answering-machine
+> make docker
+> docker run -e XXXXX -it -p 8080:8080 <image>  
+```
+
+Please find hereafter an example of configuration variable,
+``` bash
+-e GOLAM_RECORDER_USERNAME=ObjectIsAdvantag 
+-e GOLAM_RECORDER_PASSWORD=XXXXX
+-e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/5048353/www/audio
+-e GOLAM_TRANSCRIPTS_EMAIL=steve.sfartz@gmail.com
+-e GOLAM_CHECKER_NAME=Stève
+-e GOLAM_CHECKER_NUMBER=33678007833
+``` 
+
 
 # Want to contribute 
 
