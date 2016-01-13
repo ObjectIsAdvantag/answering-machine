@@ -79,7 +79,7 @@ func (app *AnsweringMachine) RegisterHandlers() {
 	// Add admin API
 	if app.routes.AdminRoute != "" {
 		CreateAdminWebAPI(app.db, app.routes.AdminRoute)
-		glog.V(0).Infof("Admin API registered, browse message at URL http://.../admin ")
+		glog.V(0).Infof("Admin API registered at %s", app.routes.AdminRoute)
 	}
 }
 

@@ -46,7 +46,8 @@ FUTURE : see milestones [vNext](https://github.com/ObjectIsAdvantag/answering-ma
 [v0.4](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.4) : in progress
    - [x] i18n messages
    - [x] distinct messages & env conf
-   - [x] add Docker support
+   - [x] Docker support
+   - [ ] Configuration check
    - [ ] test on Linux
    - [ ] installation guidelines (ie, tropo app provisionning)
    

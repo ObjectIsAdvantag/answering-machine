@@ -72,9 +72,9 @@ dist: linux
 	cp recorder-server dist/
 	mkdir dist/logs
 	mkdir dist/uploads
-	mkdir dist/conf
-	cp messages-en.json dist/conf
-	cp messages-fr.json dist/conf
+	mkdir dist/messages
+	cp messages-en.json dist/messages
+	cp messages-fr.json dist/messages
 	cp env-tropofs.json dist/env.json
 	cp Dockerfile dist/
 

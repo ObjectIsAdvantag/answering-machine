@@ -5,9 +5,9 @@ MAINTAINER "Stève Sfartz" <steve.sfartz@gmail.com>
 
 COPY . /machine
 
-EXPOSE 8080 8081
+EXPOSE 8080
 
-ENTRYPOINT ["/machine/answering-machine", "-port", "8080", "--env=/machine/env.json", "--messages=/machine/conf/messages-fr.json", "-logtostderr=true", "-v=5"]
+ENTRYPOINT ["/machine/answering-machine", "--port=8080", "-logtostderr=true", "-v=5", "--messages=/machine/messages/messages-en.json", "--env=/machine/env.json"]
 
 
 

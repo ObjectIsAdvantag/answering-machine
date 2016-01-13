@@ -44,10 +44,11 @@ func (srv *server) start() error {
 		// register health check
 		launch := time.Now()
 		http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-			glog.V(1).Infof("hit healthcheck endpoint\n")
+			glog.V(2).Infof("hit healthcheck endpoint\n")
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			fmt.Fprintf(w, `{ "name":"%s", "version":"%s", "port":"%s", "started":"%s"}`, srv.serviceName, srv.serviceVersion, srv.port, launch.Format(time.RFC3339))
 		})
+		glog.V(0).Infof("Health endpoint registered at /ping")
 
 		// register service endpoints
 		srv.service.RegisterHandlers()
