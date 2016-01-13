@@ -1,9 +1,9 @@
-# Goal
+## Goal
 
 A #GOLang Answering Machine backed by Cisco Tropo Communication Services 
 
 
-# Give it a try
+## Give it a try
 
 1. Signup at http://tropo.com
    - Note : Your login/password credentials can also be used to authenticate against the Tropo REST API (see provisonning) 
@@ -93,16 +93,15 @@ A #GOLang Answering Machine backed by Cisco Tropo Communication Services
  
 
 
-
-# Roadmap
+## Roadmap
 
 Check [vNext](https://github.com/ObjectIsAdvantag/answering-machine/milestones/vNext) and [Triage](https://github.com/ObjectIsAdvantag/answering-machine/milestones/Triage) for non priorized issues.
 
 [v0.4](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.4) : Hosting & Packaging
    - i18n messages
    - distinct messages & env conf
-   - Docker support
-   - Configuration endpoint /conf
+   - docker support
+   - configuration endpoint /conf
    - installation guidelines
    
 [v0.3](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.3): Full MVP
@@ -122,7 +121,8 @@ v0.1: back-end API structure
    - healthcheck
    - error structure
 
-# Docker
+
+## Docker
  
 TODO: Publish the answering machine image to docker
 
@@ -145,7 +145,7 @@ Please find hereafter an example of configuration variable,
 ``` 
 
 
-# Want to contribute 
+## Want to contribute 
 
 Take your dev hat and ...
 
@@ -195,7 +195,7 @@ In a third terminal, or postman, call the answering machine healthcheck endpoint
 ```
 
 
-# License
+## License
 
 MIT, see license file.
 

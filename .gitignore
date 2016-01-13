@@ -7,11 +7,13 @@
 *.test
 answering-machine
 recorder-server
+dist/
+pkg/
+releases/
 
 # runtime artefacts
 log/
 uploads/
-dist/
 *.db
 
 # sensitive data

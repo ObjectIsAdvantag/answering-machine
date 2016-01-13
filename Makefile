@@ -96,3 +96,33 @@ erase:
 .PHONY: archive
 archive:
 	git archive --format=zip HEAD > answering-machine.zip
+
+
+.PHONY: pkg
+pkg: pkg-windows pkg-linux
+
+.PHONY: pkg-windows
+pkg-windows: windows
+	rm -rf pkg/windows
+	mkdir pkg/windows
+	cp answering-machine.exe pkg/windows
+	cp recorder-server.exe pkg/windows
+	mkdir pkg/windows/logs
+	mkdir pkg/windows/uploads
+	cp messages-en.json pkg/windows
+	cp messages-fr.json pkg/windows
+	cp env-tropofs.json pkg/windows/env.json
+
+.PHONY: pkg-linux
+pkg-linux: linux
+	rm -rf pkg/linux
+	mkdir pkg/linu
+	cp answering-machine pkg/linux
+	cp recorder-server pkg/linux
+	mkdir pkg/linux/logs
+	mkdir pkg/linux/uploads
+	cp messages-en.json pkg/linux
+	cp messages-fr.json pkg/linux
+	cp env-tropofs.json pkg/linux/env.json
+	tar -zcvf linux.tgz pkg/linux
+
