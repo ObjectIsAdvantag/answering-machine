@@ -2,8 +2,18 @@
 
 a #GOLang Answering Machine backed by Cisco Tropo Communication Services 
 
+The AnsweringMachine is a customizable software that:
+   - plays a welcome message at incoming calls, 
+   - records voice messages,
+   - let an authorized user check for new messages,
+   - sends transcripts of recordings to your mailbox.
 
-## Give it a try
+The project was started as a proof of concept to learn #golang and #tropo APIs.
+
+You may find it worth giving it a try for fun and no profit, and who knows... fork this github repo to build your own.
+
+
+## Walkthrough
 
 1. Signup at http://tropo.com
    - Note: In the header bar, close to your firstname, your tropo account number is displayed, 7 digits, (5048353) in my case  
@@ -121,8 +131,27 @@ v0.1: back-end API structure
 
 ## Docker
  
-TODO: Publish the answering machine image to docker
+Pull the [AnsweringMachine image from DockerHub](https://hub.docker.com/r/objectisadvantag/answeringmachine/) and run your answering machine.
+Thanks to #golang capacity to generate autonomous binaries, the image is pretty small (about 4 MB compressed).
+Note: the image size is half size (2 MB) if we do not onboard the server-recorder, check tag 0.4-small
 
+   ``` bash
+   > docker pull objectisadvantag/answeringmachine
+   > docker run -e CHECKER_NAME=Steve -it -p 8080:8080 objectisadvantag/answeringmachine
+   ```
+
+To override default configuration (which can be checked at the /conf endpoint), replace XXXXX in the command line below with:
+    ``` bash
+    -e GOLAM_RECORDER_USERNAME=ObjectIsAdvantag 
+    -e GOLAM_RECORDER_PASSWORD=XXXXX
+    -e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/5048353/www/audio
+    -e GOLAM_TRANSCRIPTS_EMAIL=steve.sfartz@gmail.com
+    -e GOLAM_CHECKER_NAME=Steve
+    -e GOLAM_CHECKER_NUMBER=336780078XX
+    ``` 
+
+
+### Building a Docker image
 You can build your own Docker image by cloning this repo.
 
 ``` bash
@@ -131,22 +160,15 @@ You can build your own Docker image by cloning this repo.
 > docker run -e XXXXX -it -p 8080:8080 <image>  
 ```
 
-To override default configuration (which can be checked at the /conf endpoint), replace XXXXX in the command line below with:
-``` bash
--e GOLAM_RECORDER_USERNAME=ObjectIsAdvantag 
--e GOLAM_RECORDER_PASSWORD=XXXXX
--e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/5048353/www/audio
--e GOLAM_TRANSCRIPTS_EMAIL=steve.sfartz@gmail.com
--e GOLAM_CHECKER_NAME=Stève
--e GOLAM_CHECKER_NUMBER=33678007833
-``` 
-
 
 ## Want to contribute 
 
 Your contributions are welcome, simply create Issues to discusss a design point, ask for an evolution, or push pull requests 
    - linux and mac testers wanted
    - check the Triage and vNext milestones 
+
+To start with, fork the repository and run the make command.
+Note : the whole project was developed on a windows platform, with a goal of full interoperability with linux and macOS. Drop me an email if you encounter any issue.
 
 
 ## License
