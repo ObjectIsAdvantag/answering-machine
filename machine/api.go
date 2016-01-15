@@ -24,7 +24,6 @@ func AddAdminEndpoint(store *VoiceMessageStorage, route string, ) (*AdminWebAPI,
 }
 
 
-
 func (api *AdminWebAPI) registerAdminWebAPI(route string) {
 
 	http.HandleFunc(route, func(w http.ResponseWriter, req *http.Request) {

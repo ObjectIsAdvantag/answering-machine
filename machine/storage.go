@@ -34,7 +34,7 @@ type MachineProgress string
 const (
 	STARTED MachineProgress = "STARTED"
 	RECORDED MachineProgress = "RECORDED"
-	EMPTY MachineProgress = "EMPTY"
+	NOMESSAGE MachineProgress = "NOMESSAGE" // no message was left by caller
 	FAILED MachineProgress = "FAILED"
 )
 
@@ -50,7 +50,7 @@ type VoiceMessage struct {
 	CallID			string
 	CreatedAt		time.Time
 	CallerNumber    string
-	Progress    	MachineProgress // enum of STARTED, RECORDED, EMPTY, FAILED
+	Progress    	MachineProgress // enum of STARTED, NOMESSAGE, RECORDED, FAILED
 	Recording   	string // URL of the audio recording
 	Duration		int // number of seconds
 	Transcript  	string // transcript contents if successful

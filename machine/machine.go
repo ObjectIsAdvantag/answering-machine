@@ -203,21 +203,39 @@ func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req 
 		return
 	}
 
-	vm.Progress = RECORDED
-	vm.Recording = answer.Actions.URL
-	vm.Duration = answer.Actions.Duration
-	vm.Status = NEW
-	if err := app.db.Store(vm); err != nil {
-		glog.V(2).Infof("Cannot update message with callID: %s", answer.CallID)
-		// TODO Analyse how often this case would happen, we should at a minimum update the message state to FAILED
+	// Did the caller hang down without leaving a message
+	if answer.State == tropo.STATE_DISCONNECTED {
+		glog.V(2).Infof("Call was disconnected, user hang down before beep, callID:", answer.CallID)
 
-		// say alternate welcome message
-		tropoHandler.Say(app.messages.RecordingFailedMessage, app.messages.DefaultVoice)
+		vm.Progress = NOMESSAGE
+		if err := app.db.Store(vm); err != nil {
+			glog.V(2).Infof("Cannot update message with callID: %s", answer.CallID)
+			// TODO Analyse how often this case would happen, we should at a minimum update the message state to FAILED
+		}
 		return
 	}
 
-	// say good bye
-	tropoHandler.Say(app.messages.RecordingOKMessage, app.messages.DefaultVoice)
+	// Did the caller left a message
+	if answer.State == tropo.STATE_ANSWERED {
+		vm.Progress = RECORDED
+		vm.Recording = answer.Actions.URL
+		vm.Duration = answer.Actions.Duration
+		vm.Status = NEW
+		if err := app.db.Store(vm); err != nil {
+			glog.V(2).Infof("Cannot update message with callID: %s", answer.CallID)
+			// TODO Analyse how often this case would happen, we should at a minimum update the message state to FAILED
+
+			// say an error happened, your message was not recorded
+			tropoHandler.Say(app.messages.RecordingFailedMessage, app.messages.DefaultVoice)
+			return
+		}
+
+		// say good bye
+		tropoHandler.Say(app.messages.RecordingOKMessage, app.messages.DefaultVoice)
+		return
+	}
+
+	glog.Warningf("Unhandled case in RecordResult, state: %s, callID: %s", answer.State, answer.CallID)
 }
 
 func (app *AnsweringMachine) recordingIncompleteHandler(w http.ResponseWriter, req *http.Request) {

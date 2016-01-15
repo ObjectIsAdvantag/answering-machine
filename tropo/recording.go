@@ -3,6 +3,12 @@
 
 package tropo
 
+type RecordingState string
+const (
+	STATE_ANSWERED RecordingState = "ANSWERED"
+	STATE_DISCONNECTED RecordingState = "DISCONNECTED"
+)
+
 
 type recordingResultWrapper struct {
 	RecordingResult `json:"result"`
@@ -11,7 +17,7 @@ type recordingResultWrapper struct {
 type RecordingResult struct {
    SessionID string `json:"sessionId"`
    CallID string `json:"callId"`
-   State string `json:"state"`
+   State RecordingState `json:"state"`
    SessionDuration int `json:"sessionDuration"`
    Sequence int `json:"sequence"`
    Complete bool `json:"complete"`

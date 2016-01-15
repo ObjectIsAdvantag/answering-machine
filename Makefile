@@ -14,12 +14,25 @@ recorder: build-recorder run-recorder
 
 .PHONY: build-recorder
 build-recorder:
-	rm -f recorder-server.exe recorder-server
+	rm -f recorder-server recorder-server.exe recorder-server.zip recorder-server.debug
 	go build recorder-server.go
 
 .PHONY: run-recorder
 run-recorder: build-recorder
 	./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5
+
+.PHONY: build
+build: build-recorder build-machine
+
+.PHONY: build-machine
+build-machine:
+	rm -f answering-machine answering-machine.exe answering-machine.zip answering-machine.debug
+	go build $(GOFLAGS) answering-machine.go
+
+.PHONY: debug
+debug:
+	godebug build $(GOFLAGS) -instrument github.com/$(GITHUB_ACCOUNT)/answering-machine/machine answering-machine.go
+	./answering-machine.debug -logtostderr=true -v=5
 
 .PHONY: run
 run:
@@ -44,15 +57,17 @@ dev:
 	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
 	./answering-machine.exe -port 8080 -logtostderr=true -v=5  $(CONFIG)
 
+.PHONY: clean
+clean:
+	rm -f answering-machine answering-machine.exe answering-machine.zip answering-machine.debug
+	rm -f recorder-server recorder-server.exe recorder-server.zip recorder-server.debug
 
-.PHONY: build
-build: clean build-recorder
-	go build $(GOFLAGS) answering-machine.go
-
-.PHONY: debug
-debug:
-	godebug build $(GOFLAGS) -instrument github.com/$(GITHUB_ACCOUNT)/answering-machine/machine answering-machine.go
-	./answering-machine.debug -logtostderr=true -v=5
+.PHONY: erase
+erase:
+	rm -f *.db
+	rm -f ./log/*
+	rm -f ./uploads/*
+	rm -f ./dist
 
 .PHONY: linux
 linux:
@@ -82,21 +97,9 @@ dist: linux
 docker: dist
 	cd dist; docker build -t $(DOCKER_ACCOUNT)/answeringmachine .
 
-.PHONY: clean
-clean:
-	rm -f answering-machine answering-machine.exe answering-machine.zip answering-machine.debug
-	rm -f recorder-server recorder-server.exe recorder-server.zip recorder-server.debug
-
-.PHONY: erase
-erase:
-	rm -f *.db
-	rm -f ./log/*
-	rm -f ./uploads/*
-
 .PHONY: archive
 archive:
 	git archive --format=zip HEAD > answering-machine.zip
-
 
 .PHONY: pkg
 pkg: pkg-windows pkg-linux

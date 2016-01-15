@@ -1,0 +1,18 @@
+{
+    "result": {
+        "sessionId": "ec0a9a1892d4a16674b2fd245c9d265d",
+        "callId": "260677fee28e5fd3cee4ee77c709ad8b",
+        "state": "DISCONNECTED",
+        "sessionDuration": 6,
+        "sequence": 1,
+        "complete": true,
+        "error": null,
+        "calledid": "33182882566",
+        "actions": {
+            "name": "recording",
+            "attempts": 1,
+            "disposition": "SUCCESS",
+            "url": "ftp://ftp.tropo.com/www/audio/260677fee28e5fd3cee4ee77c709ad8b.wav"
+        }
+    }
+}
