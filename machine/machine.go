@@ -204,9 +204,8 @@ func (app *AnsweringMachine) recordingSuccessHandler(w http.ResponseWriter, req 
 	}
 
 	// Did the caller hang down without leaving a message
-	if answer.State == tropo.STATE_DISCONNECTED {
-		glog.V(2).Infof("Call was disconnected, user hang down before beep, callID:", answer.CallID)
-
+	if answer.State == tropo.STATE_DISCONNECTED || answer.State == tropo.STATE_FAILED {
+		glog.V(2).Infof("Call was disconnected (user hang down before beep) or failed, state:%s, callID:", answer.State, answer.CallID)
 		vm.Progress = NOMESSAGE
 		if err := app.db.Store(vm); err != nil {
 			glog.V(2).Infof("Cannot update message with callID: %s", answer.CallID)
