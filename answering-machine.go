@@ -112,7 +112,7 @@ func readConfiguration(envProperties string, messagesProperties string) (*machin
 	env.RecorderUsername= *recorderUsername
 	env.RecorderPassword = *recorderPassword
 	env.AudioServerEndpoint= *audioEndpoint
-	env.TranscriptsReceiver= *transcriptsEmail
+	env.TranscriptsReceiver= "mailto:" + *transcriptsEmail
 	env.CheckerPhoneNumber= *checkerPhoneNumber
 	env.CheckerFirstName = *checkerName
 	env.DBfilename= *dbFilename

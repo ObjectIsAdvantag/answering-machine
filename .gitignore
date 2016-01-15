@@ -18,3 +18,4 @@ uploads/
 
 # sensitive data
 *.private
+start-docker.sh

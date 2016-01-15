@@ -104,7 +104,12 @@ You may find it worth giving it a try for fun and no profit, and who knows... fo
 
 Check [vNext](https://github.com/ObjectIsAdvantag/answering-machine/milestones/vNext) and [Triage](https://github.com/ObjectIsAdvantag/answering-machine/milestones/Triage) for non priorized issues.
 
-[v0.4](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.4) : Hosting & Packaging
+[v0.5]: in progress
+   - fixed transcripts not transmitted
+   - handles disconnect properly
+   - documentation updates
+
+[v0.4](https://github.com/ObjectIsAdvantag/answering-machine/milestones/v0.4): Hosting & Packaging
    - i18n messages
    - distinct messages & env conf
    - docker support
@@ -133,22 +138,32 @@ v0.1: back-end API structure
  
 Pull the [AnsweringMachine image from DockerHub](https://hub.docker.com/r/objectisadvantag/answeringmachine/) and run your answering machine.
 Thanks to #golang capacity to generate autonomous binaries, the image is pretty small (about 4 MB compressed).
-Note: the image size is half size (2 MB) if we do not onboard the server-recorder, check tag 0.4-small
+Note: the image size is half size (2 MB) if we do not onboard the recorder-server, check tag 0.4-small
 
    ``` bash
    > docker pull objectisadvantag/answeringmachine
-   > docker run -e CHECKER_NAME=Steve -it -p 8080:8080 objectisadvantag/answeringmachine
+   > docker run -e XXXXX -it -p 8080:8080 objectisadvantag/answeringmachine
    ```
 
-To override default configuration (which can be checked at the /conf endpoint), replace XXXXX in the command line below with:
-    ``` bash
-    -e GOLAM_RECORDER_USERNAME=ObjectIsAdvantag 
-    -e GOLAM_RECORDER_PASSWORD=XXXXX
-    -e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/5048353/www/audio
-    -e GOLAM_TRANSCRIPTS_EMAIL=steve.sfartz@gmail.com
-    -e GOLAM_CHECKER_NAME=Steve
-    -e GOLAM_CHECKER_NUMBER=336780078XX
-    ``` 
+To override default configuration (which can be checked at the /conf endpoint), replace XXXXX in the command line below with any configuration variable you wish to overload:
+   ``` bash
+   -e GOLAM_RECORDER_USERNAME={tropo_account] 
+   -e GOLAM_RECORDER_PASSWORD={tropo_password]
+   -e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/{tropo_account_number]/www/audio
+   -e GOLAM_TRANSCRIPTS_EMAIL={your email}
+   -e GOLAM_CHECKER_NAME={your firstname}
+   -e GOLAM_CHECKER_NUMBER={your phone number without + prefix}
+   ``` 
+
+Example : 
+   ``` bash
+   -e GOLAM_RECORDER_USERNAME=ObjectIsAdvantag 
+   -e GOLAM_RECORDER_PASSWORD=MonMotDePasse
+   -e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/5048353/www/audio
+   -e GOLAM_TRANSCRIPTS_EMAIL=steve.sfartz@gmail.com
+   -e GOLAM_CHECKER_NAME=Steve
+   -e GOLAM_CHECKER_NUMBER=33678009999
+   ``` 
 
 
 ### Building a Docker image
