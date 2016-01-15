@@ -87,7 +87,7 @@ You may find it worth giving it a try for fun and no profit, and who knows... fo
       {
         "CallID": "e916188203beb99ae0c4677af17ea84e",
         "CreatedAt": "2016-01-13T23:10:4567261876Z",
-        "CallerNumber": "+33954218763",
+        "CallerNumber": "+3395421XXXX",
         "Progress": "RECORDED",
         "Recording": "ftp://ftp.tropo.com/www/audio/e916188203beb99ae0c4677af17ea84e.wav",
         "Duration": 4400,
@@ -145,11 +145,11 @@ Note: the image size is half size (2 MB) if we do not onboard the recorder-serve
    > docker run -e XXXXX -it -p 8080:8080 objectisadvantag/answeringmachine
    ```
 
-To override default configuration (which can be checked at the /conf endpoint), replace XXXXX in the command line below with any configuration variable you wish to overload:
+To override default configuration (which can be checked at the /conf endpoint), replace XXXXX in the command line above with any configuration variable you wish to overload:
    ``` bash
-   -e GOLAM_RECORDER_USERNAME={tropo_account] 
-   -e GOLAM_RECORDER_PASSWORD={tropo_password]
-   -e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/{tropo_account_number]/www/audio
+   -e GOLAM_RECORDER_USERNAME={tropo_account}
+   -e GOLAM_RECORDER_PASSWORD={tropo_password}
+   -e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/{tropo_account_number}/www/audio
    -e GOLAM_TRANSCRIPTS_EMAIL={your email}
    -e GOLAM_CHECKER_NAME={your firstname}
    -e GOLAM_CHECKER_NUMBER={your phone number without + prefix}
@@ -162,7 +162,7 @@ Example :
    -e GOLAM_AUDIO_ENDPOINT=http://hosting.tropo.com/5048353/www/audio
    -e GOLAM_TRANSCRIPTS_EMAIL=steve.sfartz@gmail.com
    -e GOLAM_CHECKER_NAME=Steve
-   -e GOLAM_CHECKER_NUMBER=33678009999
+   -e GOLAM_CHECKER_NUMBER=336780078XX
    ``` 
 
 
