@@ -129,3 +129,6 @@ pkg-linux: linux
 	cp env-tropofs.json pkg/linux/env.json
 	tar -zcvf linux.tgz pkg/linux
 
+.PHONY: graph
+graph:
+    godepgraph github.com/ObjectIsAdvantag/answering-machine | dot -Tpng -o answeringmachine.png

@@ -32,7 +32,7 @@ func NewAnsweringMachine(env *EnvConfiguration, messages *I18nMessages) *Answeri
 		return nil
 	}
 
-	routes := &HandlerRoutes{ "/tropo", "/tropo/recordingSuccess", "/tropo/recordingIncomplete", "/tropo/recordingFailed", "/messages", "/conf" }
+	routes := GetDefaultRoutes()
 	app := AnsweringMachine{env, messages, routes, db}
 
 	glog.V(2).Infof("Created new AnsweringMachine with configuration %s", app)

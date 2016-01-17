@@ -1,7 +1,7 @@
 // Copyright 2015, Stève Sfartz
 // Licensed under the MIT License
 
-// Admin API to browse voice messages
+// Web API to browse voice calls which have been answered by the AnsweringMachine.
 package machine
 
 import (

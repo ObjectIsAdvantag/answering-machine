@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: answeringmachine
+spec:
+  containers:
+    - name: answeringmachine
+      image: objectisadvantag/answeringmachine
+      command: ['-e', 'GOLAM_CHECKER_NAME=Steve']
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          hostPort: 80
