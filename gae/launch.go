@@ -12,9 +12,9 @@ import (
 func init() {
 
 	env := machine.GetDefaultConfigurationBackedWithTropoFS("ObjectIsAdvantag", "XXXXXX", "5048353", "Stève", "33678007899", "steve.sfartz@gmail.com")
-	env.DBfilename = ""
-	messages := machine.GetDefaultMessages
+	messages := machine.GetDefaultMessages()
 
 	service := machine.NewAnsweringMachine(env, messages)
 	service.RegisterHandlers()
 }
+
