@@ -18,7 +18,16 @@ type I18nMessages struct {
 	RecordingFailedMessage		string
 }
 
-//
+// Load default messages from file
+// The file is in json format and contains one or more of the entries:
+// - GOLAM_VOICE
+// - GOLAM_WELCOME
+// - GOLAM_WELCOME_ALT
+// - GOLAM_CHECK_NO_MESSAGE
+// - GOLAM_CHECK_NEW_MESSAGES
+// - GOLAM_RECORDING_OK
+// - GOLAM_RECORDING_FAILED
+// If an entry is not present, a default english message is added
 func LoadMessagesConfiguration(filename string) (*I18nMessages) {
 
 	conf := configure.New()
@@ -55,4 +64,17 @@ func LoadMessagesConfiguration(filename string) (*I18nMessages) {
 	messages.RecordingFailedMessage = *recordingFailed
 
 	return &messages
+}
+
+func GetDefaultMessages(filename string) (*I18nMessages) {
+	return &I18nMessages{
+		DefaultVoice: tropo.GetVoice("Vanessa"),
+		WelcomeMessage: "Welcome, please leave a message after the beep",
+		WelcomeAltMessage: "Sorry we do not take any message currently, please call again later",
+		CheckNewMessages: "Hello %s, no new messages. Have a good day !",
+		CheckNoMessage: "Hello %s, you have %d new messages",
+		RecordingOKMessage: "We got your message recorded. Have a great day !",
+		RecordingFailedMessage: "Sorry, we could not record your message. Please try again later",
+	}
+
 }

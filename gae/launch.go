@@ -6,14 +6,14 @@ package gae
 
 
 import (
-
 	"github.com/ObjectIsAdvantag/answering-machine/machine"
 )
 
 func init() {
 
-	env := machine.LoadEnvConfiguration("../env.private")
-	messages := machine.LoadMessagesConfiguration("../messages-fr.json")
+	env := machine.GetDefaultConfigurationBackedWithTropoFS("ObjectIsAdvantag", "XXXXXX", "5048353", "Stève", "33678007899", "steve.sfartz@gmail.com")
+	env.DBfilename = ""
+	messages := machine.GetDefaultMessages
 
 	service := machine.NewAnsweringMachine(env, messages)
 	service.RegisterHandlers()

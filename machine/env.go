@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/paked/configure"
+	"fmt"
 )
 
 
@@ -62,4 +63,21 @@ func LoadEnvConfiguration(filename string) (*EnvConfiguration) {
 	env.DBresetAtStartup = *dbResetAtStartup
 
 	return &env
+}
+
+func GetDefaultConfigurationBackedWithTropoFS(tropoUsername string, tropoPassword string, tropoAccountNumber string, checkerName string, checkPhoneNumber string, transcriptEmail string) (*EnvConfiguration) {
+
+	env := &EnvConfiguration{
+		RecorderEndpoint: "ftp://ftp.tropo.com/www/audio",
+		RecorderUsername: tropoUsername,
+		RecorderPassword: tropoPassword,
+		AudioServerEndpoint: fmt.Sprintf("http://hosting.tropo.com/%s/www/audio", tropoAccountNumber),
+		TranscriptsReceiver: fmt.Sprintf("mailto:%s", transcriptEmail),
+		CheckerPhoneNumber: checkPhoneNumber,
+		CheckerFirstName: checkerName,
+		DBfilename: "messages.db",
+		DBresetAtStartup: true,
+	}
+
+	return env
 }
