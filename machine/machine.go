@@ -47,18 +47,17 @@ func (app *AnsweringMachine) RegisterHandlers() {
 	http.HandleFunc(app.routes.RecordingIncompleteRoute, app.recordingIncompleteHandler)
 	http.HandleFunc(app.routes.RecordingFailedRoute, app.recordingErrorHandler)
 
-	// Add admin Endpoint
-	if app.routes.AdminRoute != "" {
-		AddAdminEndpoint(app.db, app.routes.AdminRoute)
-		glog.V(0).Infof("Administration endpoint registered at %s", app.routes.AdminRoute)
+	// Add endpoint to show messages
+	if app.routes.CheckMessagesRoute != "" {
+		AddAdminEndpoint(app.db, app.routes.CheckMessagesRoute)
+		glog.V(0).Infof("Administration endpoint registered at %s", app.routes.CheckMessagesRoute)
 	}
 
-	// Add conf Endpoint
+	// Add endpoint to show configuration
 	if app.routes.ConfigurationRoute != "" {
 		AddConfEndpoint(app, app.routes.ConfigurationRoute)
 		glog.V(0).Infof("Configuration endpoint registered at %s", app.routes.ConfigurationRoute)
 	}
-
 }
 
 func (app *AnsweringMachine) incomingCallHandler(w http.ResponseWriter, req *http.Request) {

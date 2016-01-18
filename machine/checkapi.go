@@ -12,19 +12,19 @@ import (
 )
 
 
-type AdminWebAPI struct {
+type CheckMessagesWebAPI struct {
 	store		*VoiceMessageStorage
 	route 		string
 }
 
-func AddAdminEndpoint(store *VoiceMessageStorage, route string, ) (*AdminWebAPI, error) {
-	api := &AdminWebAPI { store, route }
+func AddAdminEndpoint(store *VoiceMessageStorage, route string, ) (*CheckMessagesWebAPI, error) {
+	api := &CheckMessagesWebAPI{ store, route }
 	api.registerAdminWebAPI(route)
 	return api, nil
 }
 
 
-func (api *AdminWebAPI) registerAdminWebAPI(route string) {
+func (api *CheckMessagesWebAPI) registerAdminWebAPI(route string) {
 
 	http.HandleFunc(route, func(w http.ResponseWriter, req *http.Request) {
 		glog.V(3).Infof("Admin API call: %s %s", req.Method, req.URL.String())

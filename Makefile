@@ -131,4 +131,4 @@ pkg-linux: linux
 
 .PHONY: graph
 graph:
-    godepgraph github.com/ObjectIsAdvantag/answering-machine | dot -Tpng -o answeringmachine.png
+	godepgraph github.com/ObjectIsAdvantag/answering-machine | dot -Tpng -o answeringmachine.png

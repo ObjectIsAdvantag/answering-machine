@@ -11,7 +11,9 @@ import (
 )
 
 func init() {
-	env, messages := machine.ReadConfiguration("env.json", "messages-en.json")
+
+	env := machine.LoadEnvConfiguration("../env.private")
+	messages := machine.LoadMessagesConfiguration("../messages-fr.json")
 
 	service := machine.NewAnsweringMachine(env, messages)
 	service.RegisterHandlers()
