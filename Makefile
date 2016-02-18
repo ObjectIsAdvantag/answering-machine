@@ -1,13 +1,30 @@
-GOFLAGS = -tags netgo
-GITHUB_ACCOUNT = ObjectIsAdvantag
-DOCKER_ACCOUNT = objectisadvantag
-CONFIG=--env=env.private --messages=messages-fr.json
-STARTUP=./answering-machine.exe -port 8080 -logtostderr=true -v=5 $(CONFIG)
 
-default: dev
+# Leave it as is if you just clone the original repo
+# Replace this with your github account if you've forked the original repo,
+GITHUB_ACCOUNT = ObjectIsAdvantag
+
+# Leave as if if you 're just using, customizing or extending the machine
+# But, change this to your docker account if you plan to package and release your own answering machine
+DOCKER_ACCOUNT = objectisadvantag
+
+# Default configuration is english language for Text to Speech, and recordings are backed by Tropo Cloud
+CONFIG=--env=env-tropofs.json --messages=messages-en.json
+#CONFIG=--env=env-recorder.json --messages=messages-fr.json
+
+# Command line to start the machine for Mac, Linux and Windows
+STARTUP=./answering-machine -port 8080 -logtostderr=true -v=5 $(CONFIG)
+GOFLAGS = -tags netgo
+
+default: all
 
 .PHONY: all
 all : build build-recorder run
+
+.PHONY: goget
+goget: 
+	go get github.com/golang/glog
+	go get github.com/boltdb/bolt
+	go get github.com/paked/configure
 
 .PHONY: recorder
 recorder: build-recorder run-recorder
@@ -19,10 +36,10 @@ build-recorder:
 
 .PHONY: run-recorder
 run-recorder: build-recorder
-	./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5
+	./recorder-server -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5
 
 .PHONY: build
-build: build-recorder build-machine
+build: goget build-recorder build-machine
 
 .PHONY: build-machine
 build-machine:
@@ -37,25 +54,26 @@ debug:
 .PHONY: run
 run:
 	rm -f messages.db
-	(./answering-machine.exe -port 8080 -logtostderr=true -v=5  $(CONFIG) &)
-	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
+	($(STARTUP) &)
+	# (./answering-machine -port 8080 -logtostderr=true -v=5  $(CONFIG) &)
+	(./recorder-server -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
 	(lt -p 8080 -s answeringmachine &)
 	(lt -p 8081 -s recorder &)
 
 .PHONY: capture
 capture:
 	rm -f messages.db
-	(./answering-machine.exe -port 8080 -logtostderr=true -v=5 $(CONFIG) &)
-	(../smartproxy/smartproxy.exe -capture -port 9090 -serve 127.0.0.1:8080 &)
-	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
+	(./answering-machine -port 8080 -logtostderr=true -v=5 $(CONFIG) &)
+	(../smartproxy/smartproxy -capture -port 9090 -serve 127.0.0.1:8080 &)
+	(./recorder-server -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
 	(lt -p 9090 -s answeringmachine &)
 	(lt -p 8081 -s recorder &)
 
 .PHONY: dev
 dev:
 	rm -f messages.db
-	(./recorder-server.exe -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
-	./answering-machine.exe -port 8080 -logtostderr=true -v=5  $(CONFIG)
+	(./recorder-server -port 8081 -formID filename -directory "./uploads" -upload "recordings" -download "audio" -logtostderr=true -v=5 &)
+	./answering-machine -port 8080 -logtostderr=true -v=5  $(CONFIG)
 
 .PHONY: clean
 clean:
@@ -70,12 +88,17 @@ erase:
 	rm -f ./dist
 
 .PHONY: linux
-linux:
+linux: goget
 	GOOS=linux GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
 	GOOS=linux GOARCH=amd64 go build $(GOFLAGS) recorder-server.go
 
+.PHONY: mac
+mac: goget
+	GOOS=darwin GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
+	GOOS=darwin GOARCH=amd64 go build $(GOFLAGS) recorder-server.go
+
 .PHONY: windows
-windows:
+windows: goget
 	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) answering-machine.go
 	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) recorder-server.go
 
